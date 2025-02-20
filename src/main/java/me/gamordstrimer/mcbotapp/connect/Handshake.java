@@ -22,7 +22,7 @@ public class Handshake {
 
         this.out = new DataOutputStream(socket.getOutputStream());
     }
-
+    /*
     public void sendHandshake() throws IOException {
         SendPacket sendPacket = new SendPacket(out);
         ByteArrayOutputStream buffer;
@@ -76,4 +76,6 @@ public class Handshake {
             System.out.println("No response received from the server");
         }
     }
+
+     */
 }

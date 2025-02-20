@@ -1,5 +1,6 @@
 package me.gamordstrimer.mcbotapp.login;
 
+import me.gamordstrimer.mcbotapp.serverhandler.ResponsesListener;
 import me.gamordstrimer.mcbotapp.utils.PacketWriter;
 import me.gamordstrimer.mcbotapp.utils.SendPacket;
 
@@ -47,6 +48,8 @@ public class LoginRequest {
 
         // Converte to byte array and send
         sendPacket.sendPacket(buffer.toByteArray());
+
+        System.out.println("Handshake packet send!");
 
         // Step 2: Send Login Start Packet
         buffer = new ByteArrayOutputStream();

@@ -20,6 +20,8 @@ public class ResponsesListener {
     private ByteArrayOutputStream buffer;
     private DataOutputStream packet;
 
+    private int compressionThreshold = 256; // Default compression threshold for Minecraft
+
     public ResponsesListener(Socket socket, String SERVER_ADDR, int SERVER_PORTS) throws IOException {
         this.socket = socket;
 
@@ -48,29 +50,40 @@ public class ResponsesListener {
 
             switch (packetID) {
                 case 0x00: // Disconnect
-                    String disconnectMessage = PacketReader.readString(dataIn);
-                    System.out.println("Disconnected: " + disconnectMessage);
+                    String disconnectID = PacketReader.readString(dataIn);
+                    System.out.println("Disconnected: " + disconnectID);
+                    byte[] packetData = new byte[packetLength - 1];
+                    dataIn.readFully(packetData);
+
+                    String disconnectMessage = new String(packetData, "UTF-8");
+                    System.out.println("Decoded Disconnect Message: " + disconnectMessage);
                     return; // Stop Listening
 
                 case 0x02: // Login Success
                     String uuid = PacketReader.readString(dataIn);
                     String username = PacketReader.readString(dataIn);
                     System.out.println("Login Success! UUID: " + uuid + ", Username: " + username);
-                    break; // Continue listening for more packets
+                    break;
 
-                case 0x03: // Keep-Alive
-                    int keepAliveID = PacketReader.readVarInt(dataIn);
-                    System.out.println("Received Keep-Alive Packet. ID: " + keepAliveID);
+                case 0x03: // set Compression
+                    compressionThreshold = PacketReader.readVarInt(dataIn);
+                    System.out.println("Received Set Compression Threshold: " + compressionThreshold);
+                    dataIn.skipBytes(packetLength);
+                    break; // Continue listening for other packets.
 
-                    // Send back a Keep-Alive response
-                    sendKeepAlive(keepAliveID);
-                    break; // Continue listening for more packets
 
                 default:
-                    byte[] unknownPacketData = new byte[packetLength - 1];
-                    dataIn.readFully(unknownPacketData);
-                    System.out.println("Unrecognized packet ID: " + packetID + ", Data: " + Arrays.toString(unknownPacketData));
-                    dataIn.skipBytes(packetLength - 1); // Skip remaining bytes.
+                    // Default case: Handle any unrecognized packets
+                    if (packetLength > 1) {
+                        byte[] unknownPacketData = new byte[packetLength - 1];
+                        dataIn.readFully(unknownPacketData);
+                        System.out.println("Unrecognized packet ID: " + packetID + ", Data: " + Arrays.toString(unknownPacketData) + ". Skipping...");
+                        dataIn.skipBytes(packetLength);
+                    } else {
+                        System.out.println("Unrecognized packet ID: " + packetID + " with wrong length. Skipping...");
+                        dataIn.skipBytes(packetLength); // Skip the whole packet if it's too small
+                    }
+                    break;
             }
         }
     }
@@ -79,11 +92,19 @@ public class ResponsesListener {
         buffer = new ByteArrayOutputStream();
         packet = new DataOutputStream(buffer);
 
-        PacketWriter.writeVarInt(packet, 0x03); // Keep-Alive Packet ID
-        PacketWriter.writeVarInt(packet, keepAliveID); // send Keep-Alive ID
+        PacketWriter.writeVarInt(packet, 0x00); // Keep-Alive Packet ID
+        PacketWriter.writeVarInt(packet, keepAliveID);
+        packet.writeByte(0); // Add an extra byte (dummy data) to test
+
+        System.out.println("Sent Keep-Alive Packet: " + Arrays.toString(buffer.toByteArray()));
+        System.out.println("Sending Keep-Alive ID: " + keepAliveID);
 
         sendPacket.sendPacket(buffer.toByteArray());
 
         System.out.println("Sent Keep-Alive response. ID: " + keepAliveID);
+    }
+
+    public int getCompressionThreshold() {
+        return compressionThreshold;
     }
 }

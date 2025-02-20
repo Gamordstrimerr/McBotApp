@@ -62,7 +62,7 @@ public class MinecraftClient {
             // STEP 1 : Create Socket and connect to the server
             socket = new Socket();
             System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
-            socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 5000);
+            socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 10000);
             System.out.println("Connected to the server");
 
             // STEP 2 : send Login Request packet
