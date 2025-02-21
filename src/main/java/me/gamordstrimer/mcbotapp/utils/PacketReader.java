@@ -2,6 +2,7 @@ package me.gamordstrimer.mcbotapp.utils;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 public class PacketReader {
 
@@ -27,5 +28,11 @@ public class PacketReader {
         byte[] bytes = new byte[length];
         in.readFully(bytes); // Read the UTF-8 encoded string
         return new String(bytes, "UTF-8"); // Convert bytes to string
+    }
+
+    public static UUID readUUID(DataInputStream in) throws IOException {
+        long mostSigBits = in.readLong();  // Read first 8 bytes (most significant bits)
+        long leastSigBits = in.readLong(); // Read next 8 bytes (least significant bits)
+        return new UUID(mostSigBits, leastSigBits);
     }
 }

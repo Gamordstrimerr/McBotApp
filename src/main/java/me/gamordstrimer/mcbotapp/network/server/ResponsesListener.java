@@ -7,6 +7,7 @@ import me.gamordstrimer.mcbotapp.utils.SendPacket;
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.UUID;
 
 public class ResponsesListener {
 
@@ -67,7 +68,7 @@ public class ResponsesListener {
                     return; // Stop listening once disconnected
 
                 case 0x02: // Login Success
-                    String uuid = PacketReader.readString(dataIn);
+                    UUID uuid = PacketReader.readUUID(dataIn);
                     String username = PacketReader.readString(dataIn);
                     System.out.println("Login Success! UUID: " + uuid + ", Username: " + username);
                     break; // Continue Listening for other packets
