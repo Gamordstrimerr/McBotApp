@@ -16,7 +16,7 @@
 - *² : Only send if `online-mode=true` in `server.properties`.*
 - *³ : If compression is enabled in `server.properties` → `network-compression-threshold=<value>`*
 ---
-### ➢ `Login Start` packet structure:
+#### ➢ `Login Start` packet structure:
 
 | Field Name           | Type                | Description                                   |
 |----------------------|---------------------|-----------------------------------------------|
@@ -26,7 +26,7 @@
 | **Server Port**      | `Unsigned Short`    | The port number or the server (e.g., '25565') |
 | **Next State**       | `VarInt`            | `1` for status, `2` for login                 |
 ---
-### ➢ `Set Compression` packet structure:
+#### ➢ `Set Compression` packet structure:
 
 | Field Name    | Type     | Description                                                                                |
 |---------------|----------|--------------------------------------------------------------------------------------------|
@@ -43,7 +43,7 @@
 - `0x01 0x00 0x00 0x00`: The **VarInt** encoding of the **threshold** value (`256`).
   <br><br>`256` is the default **threshold** value for minecraft servers.
 ---
-### ➢ `Login Success` packet Structure:
+#### ➢ `Login Success` packet Structure:
 
 | Field Name    | Type     | Description                                                                      |
 |---------------|----------|----------------------------------------------------------------------------------|
@@ -62,7 +62,7 @@
 - `123e4567e89b12d3a456426614174000`: The **UUID** (16 bytes).
 - `53 74 65 65 76 65`: The **username** ("Steve") encoded in UTF-8 (the ASCII byte values for each character in the username).
 ---
-### ➢ `Disconnected` packet Structure:
+#### ➢ `Disconnected` packet Structure:
 | Field Name    | Type     | Description                                                                   |
 |---------------|----------|-------------------------------------------------------------------------------|
 | **Packet ID** | `byte`   | `0x00` - This is the packet ID that identifies this as the Disconnect packet. |
