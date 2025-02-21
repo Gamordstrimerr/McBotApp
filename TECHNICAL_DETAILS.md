@@ -1,6 +1,13 @@
-# Minecraft 1.8.8 (protocol version 47) :
+# ⛏️🗺️ Minecraft 1.8.8 (protocol version 47) :
 
-## Login State:
+## Summary:
+
+- 📋 Login State
+- 📦 Packet Reader 
+
+---
+
+## 📲 Login State:
 
 ### ➢ Packet Order for connection to server:
 
@@ -17,7 +24,7 @@
 - *³ : If compression is enabled in `server.properties` → `network-compression-threshold=<value>`*
 
 ---
-### ClientBound:
+### 👥 ClientBound:
 #### ➢ `Login Start` packet structure:
 
 | Field Name           | Type                | Description                                   |
@@ -28,7 +35,7 @@
 | **Server Port**      | `Unsigned Short`    | The port number or the server (e.g., '25565') |
 | **Next State**       | `VarInt`            | `1` for status, `2` for login                 |
 ---
-### ServerBound:
+### 🌐 ServerBound:
 #### ➢ `Disconnected` packet Structure:
 | Field Name    | Type     | Description                                                                   |
 |---------------|----------|-------------------------------------------------------------------------------|
@@ -81,12 +88,12 @@
 - `0x03`: The **packet ID** for **Set Compression**.
 - `0x01 0x00 0x00 0x00`: The **VarInt** encoding of the **threshold** value (`256`).
   <br><br>`256` is the default **threshold** value for minecraft servers.
+
 ---
 
+## 📦 Packet Reader:
 
-## Packet Reader:
-
-### `readVarInt()` method :
+### 📦 `readVarInt()` method :
 ```java
 public static int readVarInt(DataInputStream in) throws IOException {
     int value = 0;
@@ -106,7 +113,7 @@ public static int readVarInt(DataInputStream in) throws IOException {
 }
 ```
 
-### `readString()` method :
+### 📦 `readString()` method :
 ```java
 public static String readString(DataInputStream in) throws IOException {
     int length = readVarInt(in); // Read string length
@@ -116,7 +123,7 @@ public static String readString(DataInputStream in) throws IOException {
 }
 ```
 
-### `readUUID()` method :
+### 📦 `readUUID()` method :
 ```java
 public static UUID readUUID(DataInputStream in) throws IOException {
     long mostSigBits = in.readLong();  // Read first 8 bytes (most significant bits)
