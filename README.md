@@ -1,4 +1,4 @@
-## <u>Minecraft 1.8.8 (protocol version 47) :</u>
+## Minecraft 1.8.8 (protocol version 47) :
 
 ### Packet Order for connection to server :
 
