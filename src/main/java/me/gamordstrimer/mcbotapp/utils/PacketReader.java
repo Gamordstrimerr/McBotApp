@@ -25,7 +25,7 @@ public class PacketReader {
     public static String readString(DataInputStream in) throws IOException {
         int length = readVarInt(in); // Read string length
         byte[] bytes = new byte[length];
-        in.readFully(bytes);
-        return new String(bytes, "UTF-8");
+        in.readFully(bytes); // Read the UTF-8 encoded string
+        return new String(bytes, "UTF-8"); // Convert bytes to string
     }
 }

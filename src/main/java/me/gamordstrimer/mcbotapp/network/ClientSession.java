@@ -1,11 +1,9 @@
-package me.gamordstrimer.mcbotapp.connect;
+package me.gamordstrimer.mcbotapp.network;
 
-import me.gamordstrimer.mcbotapp.login.LoginRequest;
-import me.gamordstrimer.mcbotapp.serverhandler.ResponsesListener;
+import me.gamordstrimer.mcbotapp.network.client.LoginRequest;
+import me.gamordstrimer.mcbotapp.network.server.ResponsesListener;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -19,39 +17,16 @@ import java.net.Socket;
  *
  **/
 
-/**
- * Minecraft 1.8.8 (protocol version 47), handshake packet structure :
- *
- * +----------------------------------------------------------------------------------------+
- * |        Field      |         Type       |                     Notes                     |
- * +----------------------------------------------------------------------------------------+
- * | Packet ID         |    VarInt          | Always '0x00' for handshake                   |
- * +----------------------------------------------------------------------------------------+
- * | Protocol version  |    VarInt          | '47' for minecraft 1.8.8                      |
- * +----------------------------------------------------------------------------------------+
- * | Server Address    |    String          | The hostname or IP of the server              |
- * +----------------------------------------------------------------------------------------+
- * | Server Port       |    Unsigned Short  | The port number or the server (e.g., '25565') |
- * +----------------------------------------------------------------------------------------+
- * | Next State        |    VarInt          | '1' for status, '2' for login                 |
- * +----------------------------------------------------------------------------------------+
- **/
-
-/** To Send Example Packet :
- byte[] handshakePacket = {0x00, 0x00, 0x00, 0x01}; //Example Packet
- out.write(handshakePacket);
- out.flush();
- System.out.println("Handshake packet sent!");
- */
-
-public class MinecraftClient {
+public class ClientSession {
 
     private String SERVER_ADDR;
     private int SERVER_PORTS;
     private String username;
     private Socket socket;
 
-    public MinecraftClient(String SERVER_ADDR, int SERVER_PORTS, String username) {
+    private Thread listenerThread;
+
+    public ClientSession(String SERVER_ADDR, int SERVER_PORTS, String username) {
         this.SERVER_ADDR = SERVER_ADDR;
         this.SERVER_PORTS = SERVER_PORTS;
         this.username = username;
@@ -72,7 +47,6 @@ public class MinecraftClient {
             // STEP 3 : Listen For Response(s)
             ResponsesListener responsesListener = new ResponsesListener(socket, SERVER_ADDR, SERVER_PORTS);
             responsesListener.receiveResponse();
-
 
         } catch (IOException ex) {
             System.out.println("Connection failed : " + ex.getMessage());

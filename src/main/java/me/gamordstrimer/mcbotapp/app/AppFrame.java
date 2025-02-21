@@ -1,6 +1,6 @@
 package me.gamordstrimer.mcbotapp.app;
 
-import me.gamordstrimer.mcbotapp.config.BotConfig;
+import me.gamordstrimer.mcbotapp.network.config.BotConfig;
 
 import javax.swing.*;
 import java.awt.*;

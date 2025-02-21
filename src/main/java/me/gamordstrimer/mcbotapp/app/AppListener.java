@@ -1,7 +1,7 @@
 package me.gamordstrimer.mcbotapp.app;
 
-import me.gamordstrimer.mcbotapp.config.BotConfig;
-import me.gamordstrimer.mcbotapp.connect.MinecraftClient;
+import me.gamordstrimer.mcbotapp.network.config.BotConfig;
+import me.gamordstrimer.mcbotapp.network.ClientSession;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -72,7 +72,7 @@ public class AppListener implements ActionListener {
                 System.out.println("> Server Ports: " + botConfig.getSERVER_PORTS());
                 System.out.println("> Username of the Bot: " + botConfig.getUsername());
 
-                MinecraftClient client = new MinecraftClient(botConfig.getSERVER_ADDR(), botConfig.getSERVER_PORTS(), botConfig.getUsername());
+                ClientSession client = new ClientSession(botConfig.getSERVER_ADDR(), botConfig.getSERVER_PORTS(), botConfig.getUsername());
                 client.connect();
             }
         }

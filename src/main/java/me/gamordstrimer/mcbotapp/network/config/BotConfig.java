@@ -1,4 +1,4 @@
-package me.gamordstrimer.mcbotapp.config;
+package me.gamordstrimer.mcbotapp.network.config;
 
 public class BotConfig {
 
