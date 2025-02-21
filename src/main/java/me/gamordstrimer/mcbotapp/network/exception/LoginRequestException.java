@@ -1,4 +1,4 @@
-package me.gamordstrimer.mcbotapp.network.client;
+package me.gamordstrimer.mcbotapp.network.exception;
 
 import java.io.IOException;
 

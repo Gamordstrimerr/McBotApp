@@ -1,5 +1,6 @@
 package me.gamordstrimer.mcbotapp.network.client;
 
+import me.gamordstrimer.mcbotapp.network.exception.LoginRequestException;
 import me.gamordstrimer.mcbotapp.utils.PacketWriter;
 import me.gamordstrimer.mcbotapp.utils.SendPacket;
 

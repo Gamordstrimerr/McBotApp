@@ -15,7 +15,6 @@ public class ResponsesListener {
 
     private Socket socket;
     private OutputStream out;
-    private SendPacket sendPacket;
 
     private ByteArrayOutputStream buffer;
     private DataOutputStream packet;
@@ -27,7 +26,6 @@ public class ResponsesListener {
         this.SERVER_PORTS = SERVER_PORTS;
 
         this.out = new DataOutputStream(socket.getOutputStream());
-        this.sendPacket = new SendPacket(out);
     }
 
     public void receiveResponse() throws IOException {
