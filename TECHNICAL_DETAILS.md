@@ -1,6 +1,8 @@
-## Minecraft 1.8.8 (protocol version 47) :
+# Minecraft 1.8.8 (protocol version 47) :
 
-### - Packet Order for connection to server:
+## Login State:
+
+### ➢ Packet Order for connection to server:
 
 | Packet Name             | Client → Server  | Server → Client   |
 |-------------------------|------------------|-------------------|
@@ -12,24 +14,24 @@
 
 - *¹ : Handshake packet with status `2`.*<br>
 - *² : Only send if `online-mode=true` in `server.properties`.*
-- *³ : If compression is enabled in `server.properties` → `network-compression-threshold=`*
+- *³ : If compression is enabled in `server.properties` → `network-compression-threshold=<value>`*
 ---
-### - `Login Start` packet structure:
+### ➢ `Login Start` packet structure:
 
-| Field Name           |         Type       | Description                                   |
-|----------------------|--------------------|-----------------------------------------------|
-| **Packet ID**        |    VarInt          | Always `0x00` for handshake                   |
-| **Protocol version** |    VarInt          | `47` for minecraft 1.8.8                      |
-| **Server Address**   |    String          | The hostname or IP of the server              |
-| **Server Port**      |    Unsigned Short  | The port number or the server (e.g., '25565') |
-| **Next State**       |    VarInt          | `1` for status, `2` for login                 |
+| Field Name           | Type                | Description                                   |
+|----------------------|---------------------|-----------------------------------------------|
+| **Packet ID**        | `VarInt`            | Always `0x00` for handshake                   |
+| **Protocol version** | `VarInt`            | `47` for minecraft 1.8.8                      |
+| **Server Address**   | `String`            | The hostname or IP of the server              |
+| **Server Port**      | `Unsigned Short`    | The port number or the server (e.g., '25565') |
+| **Next State**       | `VarInt`            | `1` for status, `2` for login                 |
 ---
-### - `Set Compression` packet structure:
+### ➢ `Set Compression` packet structure:
 
-| Field Name    | Type   | Description                                                                                |
-|---------------|--------|--------------------------------------------------------------------------------------------|
-| **Packet ID** | `byte` | `0x03`  - This is the packet ID that identifies this as the **Set Compression** packet.    | 
-| **threshold** | VarInt | The compression threshold value, in bytes.                                                 | 
+| Field Name    | Type     | Description                                                                                |
+|---------------|----------|--------------------------------------------------------------------------------------------|
+| **Packet ID** | `byte`   | `0x03`  - This is the packet ID that identifies this as the **Set Compression** packet.    | 
+| **threshold** | `VarInt` | The compression threshold value, in bytes.                                                 | 
 
 #### Example :
 - If the threshold is set to `256`, the packet data would look like this:
@@ -41,7 +43,7 @@
 - `0x01 0x00 0x00 0x00`: The **VarInt** encoding of the **threshold** value (`256`).
   <br><br>`256` is the default **threshold** value for minecraft servers.
 ---
-### - `Login Success` packet Structure:
+### ➢ `Login Success` packet Structure:
 
 | Field Name    | Type     | Description                                                                      |
 |---------------|----------|----------------------------------------------------------------------------------|
@@ -60,11 +62,11 @@
 - `123e4567e89b12d3a456426614174000`: The **UUID** (16 bytes).
 - `53 74 65 65 76 65`: The **username** ("Steve") encoded in UTF-8 (the ASCII byte values for each character in the username).
 ---
-### - `Disconnected` packet Structure:
-| Field Name | Type     | Description                                                                   |
-|------------|----------|-------------------------------------------------------------------------------|
-| Packet ID  | `byte`   | `0x00` - This is the packet ID that identifies this as the Disconnect packet. |
-| reason     | `String` | The **reason** for disconnecting (UTF-8 encoded string).                      |
+### ➢ `Disconnected` packet Structure:
+| Field Name    | Type     | Description                                                                   |
+|---------------|----------|-------------------------------------------------------------------------------|
+| **Packet ID** | `byte`   | `0x00` - This is the packet ID that identifies this as the Disconnect packet. |
+| **reason**    | `String` | The **reason** for disconnecting (UTF-8 encoded string).                      |
 
 #### Example :
  - If the reason for disconnect is `"Server is full"`, the packet could look like this in hexadecimal:
@@ -77,3 +79,6 @@
 - `0x00`: The **Packet ID** for **Disconnect**.
 - `53 65 72 76 65 72 20 69 73 20 66 75 6C 6C`: The **UTF-8 encoded string** for the reason "Server is full".
 ---
+
+## Packet Read:
+
