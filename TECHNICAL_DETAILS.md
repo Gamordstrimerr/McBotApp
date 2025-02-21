@@ -1,4 +1,4 @@
-# ⛏️🗺️ Minecraft 1.8.8 (protocol version 47) :
+# ⛏️🗺️ Minecraft 1.8.8 ([Protocol Version 47](https://minecraft.wiki/w/Protocol?oldid=2772100)) :
 
 ## Summary:
 
