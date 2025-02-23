@@ -45,7 +45,7 @@
 #### Example :
 - If the reason for disconnect is `"Server is full"`, the packet could look like this in hexadecimal:
 
-```hex 
+```hexdump
 0D 00 12 7B 22 74 65 78 74 22 3A 22 4B 69 63 6B 65 64 20 66 6F 72 20 66 6C 79 69 6E 67 22 7D
 ```
 
@@ -71,7 +71,7 @@
 
 #### Example :
 - If the player's **UUID** is `550e8400-e29b-41d4-a716-446655440000` and their **username** is "Steve", the packet data in hexadecimal could look like this:
-```hex 
+```hexdump
 2E 02 24 35 35 30 65 38 34 30 30 2D 65 32 39 62 2D 34 31 64 34 2D 61 37 31 36 2D 34 34 36 36 35 35 34 34 30 30 30 30 05 53 74 65 76 65
 ```
 
@@ -98,7 +98,7 @@
 
 #### Example :
 - If the threshold is set to `256`, the packet data would look like this:
-```hex 
+```hexdump
 03 02 01 00
 ```
 #### 💡 Explanation:
