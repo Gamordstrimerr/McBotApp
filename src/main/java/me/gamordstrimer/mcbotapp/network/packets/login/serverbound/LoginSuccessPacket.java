@@ -1,4 +1,4 @@
 package me.gamordstrimer.mcbotapp.network.packets.login.serverbound;
 
-public class ServerBoundLoginSuccessPacket {
+public class LoginSuccessPacket {
 }

@@ -13,4 +13,4 @@ The app use the minecraft **TCP protocol** to communicate from **Client** to **S
 
 ---
 ## 🔎 Technical Details
-For a detailed explanation of the technical aspects of this project, please refer to [TECHNICAL_DETAILS.md](./TECHNICAL_DETAILS.md).
+For a detailed explanation of the technical aspects of this project, please refer to [TECHNICAL_DETAILS.md](TECHNICAL_DETAILS.md).

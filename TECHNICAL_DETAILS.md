@@ -4,6 +4,7 @@
 
 - 📋 Login State
 - 📦 Packet Reader 
+- 🔗 [VarInt explanation](VARINT.md)
 
 ---
 
