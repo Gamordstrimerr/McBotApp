@@ -9,19 +9,19 @@ numbers take more bytes.
 
 ## 🤔 How VarInt works ?
 
-#### Explanation:
+#### 💡 Explanation:
 - VarInt is commonly used in binary protocols, such as **Google Protocol Buffers (protobuf)** and **Minecraft's network protocol**, to efficiently encode integer values.
 
 - Instead of using a fixed number of bytes (e.g., `int` always takes 4 bytes in Java), VarInt uses 1 to 5 bytes depending on the size of the number. The most significant bit (MSB) of each byte acts as a continuation bit:
   - If the MSB is `1`, it means the next byte is also part of the number.
   - If the MSB is `0`, it means this is the last byte of the number.
 ---
-#### VarInt Encoding Rules:
+#### 📝 VarInt Encoding Rules:
 1. Encode the integer in **7-bit chunks**.
 2. If there are more bits left, set the **MSB to 1**.
 3. If it's the last byte, set the MSB **to 0**.
 ---
-#### Example Encoding:
+#### 📌 Example Encoding:
 Let's take `300` as an example:
 1. Binary of `300` = `100101100`
 2. Split into 7-bit chunks: `0000010 0101100`
