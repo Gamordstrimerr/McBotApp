@@ -1,5 +1,6 @@
 package me.gamordstrimer.mcbotapp.network;
 
+import lombok.AllArgsConstructor;
 import me.gamordstrimer.mcbotapp.network.client.LoginRequest;
 import me.gamordstrimer.mcbotapp.network.server.ResponsesListener;
 

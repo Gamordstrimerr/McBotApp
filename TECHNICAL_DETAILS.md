@@ -37,58 +37,87 @@
 ---
 ### 🌐 ServerBound:
 #### ➢ `Disconnected` packet Structure:
-| Field Name    | Type     | Description                                                                   |
-|---------------|----------|-------------------------------------------------------------------------------|
-| **Packet ID** | `byte`   | `0x00` - This is the packet ID that identifies this as the Disconnect packet. |
-| **reason**    | `String` | The **reason** for disconnecting (UTF-8 encoded string).                      |
+| Field Name    | Type                            | Description                                                                    |
+|---------------|---------------------------------|--------------------------------------------------------------------------------|
+| **Packet ID** | `VarInt`                        | `0x00` - This is the packet ID that identifies this as the Disconnect packet.  |
+| **reason**    | `String (Chat Component JSON)`  | The **reason** for disconnecting (UTF-8 encoded string).                       |
 
 #### Example :
 - If the reason for disconnect is `"Server is full"`, the packet could look like this in hexadecimal:
 
 ```
-0x00  53 65 72 76 65 72 20 69 73 20 66 75 6C 6C
+0D 00 12 7B 22 74 65 78 74 22 3A 22 4B 69 63 6B 65 64 20 66 6F 72 20 66 6C 79 69 6E 67 22 7D
 ```
 
-#### Explanation:
-- `0x00`: The **Packet ID** for **Disconnect**.
-- `53 65 72 76 65 72 20 69 73 20 66 75 6C 6C`: The **UTF-8 encoded string** for the reason "Server is full".
+#### 💡 Explanation:
+- `0D`: Total **Packet Length** (13 bytes in this cases).
+- `00`: The **Packet ID** for **Disconnect** (`0x00`).
+- `12`: **Length of String** (18 characters).
+- `7B 22 74 65 78 74 22 3A 22 4B 69 63 6B 65 64 20 66 6F 72 20 66 6C 79 69 6E 67 22 7D`: 
+  - This is the **UTF-8 encoded JSON string**: `{"text":"Kicked for flying"}`.
+
+#### 📝 Key Notes:
+- **Reason**: JSON-encoded **kick message** (`String`, VarInt length-prefixed).
+- **Used in**: **Login** State, sent from **Server** → **Client**
+- **Sending it**: Send through a **TCP socket** to the minecraft client.  
 ---
 #### ➢ `Login Success` packet Structure:
 
-| Field Name    | Type     | Description                                                                      |
-|---------------|----------|----------------------------------------------------------------------------------|
-| **Packet ID** | `byte`   | `0x02` - This is the packet ID that identifies this as the Login Success packet. |
-| **UUID**      | `UUID`   | The player's UUID (16 bytes, unique identifier).                                 |
-| **username**  | `String` | The player's username (UTF-8 encoded string).                                    |
+| Field Name    | Type                         | Description                                                                      |
+|---------------|------------------------------|----------------------------------------------------------------------------------|
+| **Packet ID** | `VarInt`                     | `0x02` - This is the packet ID that identifies this as the Login Success packet. |
+| **UUID**      | `String (36-character UUID)` | The player's UUID (16 bytes, unique identifier).                                 |
+| **username**  | `String`                     | The player's username (UTF-8 encoded string).                                    |
 
 #### Example :
-- If the player's **UUID** is `123e4567-e89b-12d3-a456-426614174000` and their **username** is "Steve", the packet data in hexadecimal could look like this:
+- If the player's **UUID** is `550e8400-e29b-41d4-a716-446655440000` and their **username** is "Steve", the packet data in hexadecimal could look like this:
 ```
-0x02  123e4567e89b12d3a456426614174000  53 74 65 65 76 65
+2E 02 24 35 35 30 65 38 34 30 30 2D 65 32 39 62 2D 34 31 64 34 2D 61 37 31 36 2D 34 34 36 36 35 35 34 34 30 30 30 30 05 53 74 65 76 65
 ```
 
-#### Explanation:
-- `0x02`: **Packet ID** for **Login Success**.
-- `123e4567e89b12d3a456426614174000`: The **UUID** (16 bytes).
-- `53 74 65 65 76 65`: The **username** ("Steve") encoded in UTF-8 (the ASCII byte values for each character in the username).
+#### 💡 Explanation:
+- `2E`: **Packet Length** (46 bytes).
+- `02`: **Packet ID** for **Login Success** (`0x02`).
+- `24`: **UUID String Length** (36 characters).
+- `35 35 30 65 38 34 30 30 2D 65 32 39 62 2D 34 31 64 34 2D 61 37 31 36 2D 34 34 36 36 35 35 34 34 30 30 30 30`: 
+  - The **UUID** (16 bytes) (`550e8400-e29b-41d4-a716-446655440000`).
+- `05`: **Username Length** (`5` for `Steve`).
+- `53 74 65 76 65`: **UTF-8 Encoded Username** (`Steve`).
+
+#### 📝 Key Notes:
+- The **UUID** is in **string format with dashes** (not a raw `16-byte` UUID).
+- Both the **UUID** and **Username** are **length-prefixed UTF-8 strings** (using `VarInt` for length).
+- **Sending it**: Send through a **TCP socket** to the minecraft client.
 ---
 #### ➢ `Set Compression` packet structure:
 
-| Field Name    | Type     | Description                                                                                |
-|---------------|----------|--------------------------------------------------------------------------------------------|
-| **Packet ID** | `byte`   | `0x03`  - This is the packet ID that identifies this as the **Set Compression** packet.    | 
-| **threshold** | `VarInt` | The compression threshold value, in bytes.                                                 | 
+| Field Name    | Type      | Description                                                                                |
+|---------------|-----------|--------------------------------------------------------------------------------------------|
+| **Packet ID** | `VarInt`  | `0x03`  - This is the packet ID that identifies this as the **Set Compression** packet.    | 
+| **threshold** | `VarInt`  | The compression threshold value, in bytes.                                                 | 
 
 #### Example :
 - If the threshold is set to `256`, the packet data would look like this:
 ``` 
-0x03 0x01 0x00 0x00 0x00
+03 02 01 00
 ```
-#### Explanation:
-- `0x03`: The **packet ID** for **Set Compression**.
-- `0x01 0x00 0x00 0x00`: The **VarInt** encoding of the **threshold** value (`256`).
+#### 💡 Explanation:
+- `03`: **Packet Length** (3 bytes total).
+- `03`: The **packet ID** for **Set Compression**.
+- `02`: VarInt Length of Threshold (since `256` is stored as two bytes in VarInt format).
+- `01 00`: 	Compression Threshold (`256` encoded as VarInt).
   <br><br>`256` is the default **threshold** value for minecraft servers.
 
+#### 📝 Key Notes:
+- The **threshold** determines when packets should be compressed:
+  - If a packet's **uncompressed size** is ≥ `256 bytes`, it gets **compressed using Zlib**.
+  - If a packet's **size** is < `256 bytes`, it remains **uncompressed**.
+-  **VarInt encoding** is used for the threshold: `256` (`0x100`) is encoded as **two bytes**: `01 00`.
+
+
+- After this packet is sent, the client must **start decompressing incoming packets** if their **size** exceeds the threshold.
+- This packet is sent **during the Login State**, just before switching to Play mode.
+- **Sending it**: Send through a **TCP socket** to the minecraft client.
 ---
 
 ## 📦 Packet Reader:

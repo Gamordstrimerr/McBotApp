@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.zip.InflaterInputStream;
 
 public class ResponsesListener {
 
@@ -37,66 +38,55 @@ public class ResponsesListener {
             // Read Packet length (VarInt)
             int packetLength = PacketReader.readVarInt(dataIn);
             if (packetLength < 0) {
-                System.out.println("Invalid packet Received");
+                System.out.println("Invalid packet received, stopping...");
                 break;
             }
 
             // Read Packet ID (VarInt)
             int packetID = PacketReader.readVarInt(dataIn);
-            System.out.println("Received packet ID: " + packetID + " (Length: " + packetLength + ")");
+            int bytesRead = PacketReader.getLastReadVarIntSize(); // Get size of last VarInt read
 
-            switch (packetID) {
-                case 0x00: // Disconnect
-                    String disconnectID = PacketReader.readString(dataIn);
-                    System.out.println("Disconnected: " + disconnectID);
+            System.out.println("Received packet ID: 0x" + String.format("%02X", packetID) + " (Length: " + packetLength + ")");
 
-                    if (packetLength <= 1) {
-                        System.out.println("Packet too short, skipping...");
-                        return;
-                    }
+            // Read the remaining packet data
+            int remainingLength = packetLength - bytesRead;
+            byte[] packetData = new byte[remainingLength];
+            dataIn.readFully(packetData);
 
-                    byte[] packetData = new byte[packetLength - 1];
-                    dataIn.readFully(packetData);
-
-                    System.out.println("Raw disconnect message data: " + Arrays.toString(packetData));
-                    String disconnectMessage = new String(packetData, "UTF-8");
-                    System.out.println("Decoded Disconnect Message: " + disconnectMessage);
-
-                    // Try to reconnect
-                    System.out.println("Attempting to reconnect...");
-                    // reconnect();  // Your reconnect logic here
-                    return; // Stop listening once disconnected
-
-                case 0x02: // Login Success
-                    UUID uuid = PacketReader.readUUID(dataIn);
-                    String username = PacketReader.readString(dataIn);
-                    System.out.println("Login Success! UUID: " + uuid + ", Username: " + username);
-                    break; // Continue Listening for other packets
-
-                case 0x03: // Get Compression Threshold
-                    System.out.println("Compression Threshold Packet ID. Skipping...");
-                    dataIn.skipBytes(packetLength);
-                    break;
-
-                default:
-                    // Default case: Handle any unrecognized packets
-                    System.out.println("Unrecognized packet ID: " + packetID + ". Skipping...");
-                    dataIn.skipBytes(packetLength); // Skip unrecognized packets
-                    break;
+            // Decompress if packet length > 256 (compressed)
+            if (packetLength > 256) {
+                packetData = decompress(packetData);
+                System.out.println("Decompressed Packet Data (Hex): " + bytesToHex(packetData));
+                System.out.println("Decompressed Packet Data (ASCII): " + new String(packetData, "UTF-8"));
+            } else {
+                System.out.println("Raw Packet Data (Hex): " + bytesToHex(packetData));
+                System.out.println("Raw Packet Data (ASCII): " + new String(packetData, "UTF-8"));
             }
         }
     }
 
-    private void reconnect() {
-        try {
-            socket.close(); // Close the current socket
-            Thread.sleep(5000); // Wait for 5 seconds before trying to reconnect
-            System.out.println("Reconnecting...");
-            socket = new Socket(SERVER_ADDR, SERVER_PORTS);  // Create a new socket
-            LoginRequest loginRequest = new LoginRequest(socket, SERVER_ADDR, SERVER_PORTS);
-            loginRequest.sendLoginRequest("BOT1"); // Re-send handshake and login request
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Reconnection failed: " + e.getMessage());
+    // Decompression method
+    private byte[] decompress(byte[] compressedData) throws IOException {
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(compressedData);
+        InflaterInputStream inflater = new InflaterInputStream(byteIn);
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = inflater.read(buffer)) > 0) {
+            byteOut.write(buffer, 0, len);
         }
+
+        inflater.close();
+        return byteOut.toByteArray();
+    }
+
+    // Utility method to convert byte array to a hex string
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X ", b));
+        }
+        return sb.toString().trim();
     }
 }

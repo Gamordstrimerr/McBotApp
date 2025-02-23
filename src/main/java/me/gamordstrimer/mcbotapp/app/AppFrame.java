@@ -29,7 +29,7 @@ public class AppFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(815, 400);
         frame.setLayout(null);
-        frame.setResizable(false);
+        // frame.setResizable(false);
 
         server_address_field = new JTextField();
         server_address_field.setBounds(10,25,180,25);
@@ -58,7 +58,7 @@ public class AppFrame {
         JScrollPane scrollPane = new JScrollPane(console);
         scrollPane.setBounds(10, 70, 780, 280);
 
-        redirectConsoleOutput(console);
+        // redirectConsoleOutput(console);
 
         frame.add(server_address_field);
         frame.add(server_port_field);
