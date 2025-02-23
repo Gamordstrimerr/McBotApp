@@ -30,7 +30,7 @@ Let's take `300` as an example:
    - `0000010` → `00000010` (**MSB** `0` because it's the last byte)
 4. **Encoded VarInt:** `10101100 00000010` (Hex: `AC 02`)
 ---
-#### VarInt Implementation in Java:
+#### 🛠️ VarInt Implementation in Java:
 Here's how you can encode and decode a VarInt in Java:
 
 **Encoding a VarInt:**
