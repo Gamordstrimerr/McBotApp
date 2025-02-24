@@ -71,7 +71,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>me.gamordstrimer.mcbotapp.McBotApp</mainClass>
+                            <mainClass>me.gamordstrimer.McBotApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
