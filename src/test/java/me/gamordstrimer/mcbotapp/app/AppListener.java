@@ -72,8 +72,11 @@ public class AppListener implements ActionListener {
                 System.out.println("> Server Ports: " + botConfig.getSERVER_PORTS());
                 System.out.println("> Username of the Bot: " + botConfig.getUsername());
 
-                ClientSession client = new ClientSession(botConfig.getSERVER_ADDR(), botConfig.getSERVER_PORTS(), botConfig.getUsername());
-                client.connect();
+                // Run connection in a separate thread
+                new Thread(() -> {
+                    ClientSession client = new ClientSession(botConfig.getSERVER_ADDR(), botConfig.getSERVER_PORTS(), botConfig.getUsername());
+                    client.connect();
+                }).start();
             }
         }
     }

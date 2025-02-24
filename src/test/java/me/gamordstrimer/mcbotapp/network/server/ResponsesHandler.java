@@ -127,55 +127,31 @@ public class ResponsesHandler {
     }
 
     private void sendKeepAliveResponse(int keepAliveID) throws IOException {
-        buffer.reset(); // Reuse buffer
-        packet = new DataOutputStream(buffer);
+        ByteArrayOutputStream tempBuffer = new ByteArrayOutputStream();
+        DataOutputStream tempPacket = new DataOutputStream(tempBuffer);
 
         // Write the Packet ID (0x00) for Keep-Alive
-        PacketWriter.writeVarInt(packet, 0x00);
+        PacketWriter.writeVarInt(tempPacket, 0x00);
         // Write the Keep-Alive ID
-        PacketWriter.writeVarInt(packet, keepAliveID);
+        PacketWriter.writeVarInt(tempPacket, keepAliveID);
 
-        // Convert packet to byte array
-        byte[] packetData = buffer.toByteArray();
+        byte[] packetContent = tempBuffer.toByteArray(); // Get the raw packet contents
 
-        // Create final packet buffer with length prefix
+        // Calculate total packet length (size of packetContent)
         ByteArrayOutputStream finalBuffer = new ByteArrayOutputStream();
         DataOutputStream finalPacket = new DataOutputStream(finalBuffer);
 
-        if (packetCompression != null && packetCompression.getCompression() > 0) {
-            // Compression is enabled
-            if (packetData.length < packetCompression.getCompression()) {
-                // If packet is smaller than compression threshold, write 0 (no compression)
-                PacketWriter.writeVarInt(finalPacket, packetData.length + 1); // Length including the "0"
-                PacketWriter.writeVarInt(finalPacket, 0); // "0" means uncompressed
-                System.out.println("[KEEP_ALIVE] Packet smaller than compression threshold.");
+        int packetLength = packetContent.length;
 
-                finalPacket.write(packetData);
-            } else {
-                // Compress the packet (you need a compression utility, e.g., Zlib)
-                byte[] compressedData = PacketWriter.compress(packetData);
+        // Write total packet lenght as a VarInt
+        PacketWriter.writeVarInt(finalPacket, packetLength);
+        // Write the actual packet content
+        finalPacket.write(packetContent);
 
-                PacketWriter.writeVarInt(finalPacket, compressedData.length); // Compressed length
-                finalPacket.write(compressedData); // Write compressed data
-            }
-        } else {
-            // Compression is disabled, just write the length normally
-            PacketWriter.writeVarInt(finalPacket, packetData.length);
-            finalPacket.write(packetData);
-        }
-
-        // Get final packet bytes
-        byte[] finalPacketData = finalBuffer.toByteArray();
-        System.out.println("[DEBUG] Final Packet Size: " + finalPacketData.length);
-
-        // Debug output
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : finalPacketData) {
-            hexString.append(String.format("%02X ", b));
-        }
-        System.out.println("[SEND KEEP_ALIVE RESPONSE] Packet Data: " + hexString.toString().trim());
+        System.out.println("[KEEP_ALIVE_RESPONSE] Length: " + packetLength);
+        System.out.println("[KEEP_ALIVE_RESPONSE] Keep Alive ID: " + keepAliveID);
 
         // Send packet
-        sendPacket.sendPacket(finalPacketData);
+        sendPacket.sendPacket(buffer.toByteArray());
     }
 }
