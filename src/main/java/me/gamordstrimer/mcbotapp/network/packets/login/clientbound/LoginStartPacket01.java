@@ -1,6 +1,6 @@
 package me.gamordstrimer.mcbotapp.network.packets.login.clientbound;
 
-public class LoginStartPacket {
+public class LoginStartPacket01 {
 
     /*
     private void sendLoginStartPacket(String username) throws IOException {

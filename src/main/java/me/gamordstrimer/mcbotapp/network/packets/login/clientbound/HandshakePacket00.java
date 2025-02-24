@@ -1,6 +1,6 @@
 package me.gamordstrimer.mcbotapp.network.packets.login.clientbound;
 
-public class HandshakePacket {
+public class HandshakePacket00 {
     /*
     private void sendHandshakePacket() throws IOException {
         buffer.reset(); // Reuse Buffer

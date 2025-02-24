@@ -5,9 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class BotConfig {
+public class PacketCompression {
 
-    private String SERVER_ADDR;
-    private int SERVER_PORTS;
-    private String username;
+    int compression;
+
 }

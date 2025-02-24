@@ -1,4 +1,4 @@
 package me.gamordstrimer.mcbotapp.network.packets.login.serverbound;
 
-public class DisconnectedPacket {
+public class DisconnectedPacket00 {
 }

@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class KeepAlivePacket {
+public class KeepAlivePacket00 {
 
     int keepAliveID;
 

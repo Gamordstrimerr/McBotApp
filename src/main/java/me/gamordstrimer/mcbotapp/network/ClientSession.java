@@ -1,8 +1,7 @@
 package me.gamordstrimer.mcbotapp.network;
 
-import lombok.AllArgsConstructor;
 import me.gamordstrimer.mcbotapp.network.client.LoginRequest;
-import me.gamordstrimer.mcbotapp.network.server.ResponsesListener;
+import me.gamordstrimer.mcbotapp.network.server.ResponsesHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -46,8 +45,8 @@ public class ClientSession {
             loginRequest.sendLoginRequest(username);
 
             // STEP 3 : Listen For Response(s)
-            ResponsesListener responsesListener = new ResponsesListener(socket, SERVER_ADDR, SERVER_PORTS);
-            responsesListener.receiveResponse();
+            ResponsesHandler responsesHandler = new ResponsesHandler(socket);
+            responsesHandler.receiveResponse();
 
         } catch (IOException ex) {
             System.out.println("Connection failed : " + ex.getMessage());
