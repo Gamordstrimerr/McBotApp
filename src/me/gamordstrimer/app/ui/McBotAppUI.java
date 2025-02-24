@@ -33,6 +33,7 @@ public class McBotAppUI extends JFrame{
         connectButton.addActionListener(new AppListener(server_addr, server_ports, bot_username));
         connectButton.setFocusable(false);
 
+        disconnectButton.addActionListener(new AppListener(server_addr, server_ports, bot_username));
         disconnectButton.setFocusable(false);
 
         console.setEditable(false);

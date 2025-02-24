@@ -77,7 +77,7 @@ public class AppListener implements ActionListener {
                     client.connect();
                 }).start();
             } else if (sourceButton.getText().equals("Disconnect")) {
-
+                System.out.println("Disconnect button press");
             }
         }
     }

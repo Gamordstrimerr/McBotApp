@@ -1,13 +1,10 @@
 package me.gamordstrimer.utils;
 
-import me.gamordstrimer.network.config.PacketCompression;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class SendPacket {
     private OutputStream out;
-    private PacketCompression packetCompression;
 
     public SendPacket(OutputStream out) {
         this.out = out;
