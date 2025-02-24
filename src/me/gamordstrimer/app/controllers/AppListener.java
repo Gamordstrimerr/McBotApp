@@ -1,4 +1,4 @@
-package me.gamordstrimer.app;
+package me.gamordstrimer.app.controllers;
 
 import me.gamordstrimer.network.config.BotConfig;
 import me.gamordstrimer.network.ClientSession;
@@ -31,8 +31,7 @@ public class AppListener implements ActionListener {
         // Check if the source of the event is a JButton
         if (event.getSource() instanceof JButton) {
             JButton sourceButton = (JButton) event.getSource();
-            if (sourceButton.getText().equals("connect")) {
-
+            if (sourceButton.getText().equals("Connect")) {
                 if (server_address_field.getText().isEmpty() || server_address_field.getText().equals("> Server Address")) {
                     SERVER_ADDR = "";
                 } else {
@@ -77,6 +76,8 @@ public class AppListener implements ActionListener {
                     ClientSession client = new ClientSession(botConfig.getSERVER_ADDR(), botConfig.getSERVER_PORTS(), botConfig.getUsername());
                     client.connect();
                 }).start();
+            } else if (sourceButton.getText().equals("Disconnect")) {
+
             }
         }
     }

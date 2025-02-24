@@ -1,5 +1,6 @@
 package me.gamordstrimer.app;
 
+import me.gamordstrimer.app.controllers.AppListener;
 import me.gamordstrimer.network.config.BotConfig;
 
 import javax.swing.*;

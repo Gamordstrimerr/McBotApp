@@ -1,13 +1,13 @@
 package me.gamordstrimer.app.ui;
 
-import me.gamordstrimer.app.AppListener;
+import me.gamordstrimer.app.controllers.AppListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-public class McBotApp extends JFrame{
+public class McBotAppUI extends JFrame{
 
     private JPanel panelMain;
     private JTextField server_ports;
@@ -18,7 +18,7 @@ public class McBotApp extends JFrame{
     private JTextArea console;
     private JTextArea server_console;
 
-    public McBotApp() {
+    public McBotAppUI() {
         setTitle("MINECRAFT BOT APPLICATION");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(800, 400);
