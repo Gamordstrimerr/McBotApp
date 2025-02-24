@@ -149,6 +149,7 @@ public class ResponsesHandler {
                 PacketWriter.writeVarInt(finalPacket, packetData.length + 1); // Length including the "0"
                 PacketWriter.writeVarInt(finalPacket, 0); // "0" means uncompressed
                 System.out.println("[KEEP_ALIVE] Packet smaller than compression threshold.");
+
                 finalPacket.write(packetData);
             } else {
                 // Compress the packet (you need a compression utility, e.g., Zlib)
