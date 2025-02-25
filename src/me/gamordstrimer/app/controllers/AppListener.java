@@ -2,10 +2,12 @@ package me.gamordstrimer.app.controllers;
 
 import me.gamordstrimer.network.config.BotConfig;
 import me.gamordstrimer.network.ClientSession;
+import me.gamordstrimer.network.packets.disconnect.ClientDisconnectPacket64;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Objects;
 
 public class AppListener implements ActionListener {
@@ -78,6 +80,13 @@ public class AppListener implements ActionListener {
                 }).start();
             } else if (sourceButton.getText().equals("Disconnect")) {
                 System.out.println("Disconnect button press");
+
+                try {
+                    ClientDisconnectPacket64 clientDisconnect = new ClientDisconnectPacket64();
+                    clientDisconnect.disconnect();
+                } catch (IOException ex) {
+                    System.out.println("[DISCONNECT] error:" + ex.getMessage());
+                }
             }
         }
     }

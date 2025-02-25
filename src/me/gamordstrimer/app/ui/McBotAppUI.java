@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class McBotAppUI extends JFrame{
 
@@ -37,6 +39,8 @@ public class McBotAppUI extends JFrame{
         disconnectButton.setFocusable(false);
 
         console.setEditable(false);
+        // redirectConsoleOutput(console);
+
         server_console.setEditable(false);
 
         setVisible(true);
@@ -63,5 +67,19 @@ public class McBotAppUI extends JFrame{
             }
 
         });
+    }
+
+    private void redirectConsoleOutput(JTextArea consoleArea) {
+        OutputStream outStream = new OutputStream() {
+            @Override
+            public void write(int b) {
+                consoleArea.append(String.valueOf((char) b));
+                consoleArea.setCaretPosition(consoleArea.getDocument().getLength()); // Auto-scroll
+            }
+        };
+
+        PrintStream consoleStream = new PrintStream(outStream, true);
+        System.setOut(consoleStream);
+        System.setErr(consoleStream);
     }
 }
