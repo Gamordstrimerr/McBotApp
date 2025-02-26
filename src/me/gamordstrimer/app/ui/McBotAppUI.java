@@ -19,11 +19,12 @@ public class McBotAppUI extends JFrame{
     private JButton disconnectButton;
     private JTextArea console;
     private JTextArea server_console;
+    private JTextField chat_input;
 
     public McBotAppUI() {
         setTitle("MINECRAFT BOT APPLICATION");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 400);
+        setSize(1024, 600);
         setLocationRelativeTo(null);
 
         setContentPane(panelMain);
@@ -31,6 +32,7 @@ public class McBotAppUI extends JFrame{
         setPlaceHolder(server_addr, "> Server Address");
         setPlaceHolder(server_ports, "> Default server ports : 25565");
         setPlaceHolder(bot_username, "> username of the bot");
+        setPlaceHolder(chat_input,"> send a message </>");
 
         connectButton.addActionListener(new AppListener(server_addr, server_ports, bot_username));
         connectButton.setFocusable(false);

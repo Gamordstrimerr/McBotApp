@@ -1,5 +1,7 @@
 package me.gamordstrimer.utils;
 
+import me.gamordstrimer.network.config.PacketCompression;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -33,17 +35,30 @@ public class PacketWriter {
 
     // Compress a byte array using Zlib (Deflater)
     public static byte[] compress(byte[] data) throws IOException {
+        int compressionThreshold = PacketCompression.getInstance().getCompression();
         if (data == null || data.length == 0) {
             return new byte[]{0}; // Return a single "0" byte if there's nothing to compress
         }
-
+        if (data.length < compressionThreshold) {
+            // No compression needed, prefix with uncompressed length as a VarInt
+            ByteArrayOutputStream uncompressed = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(uncompressed);
+            writeVarInt(out, 0); // Indicate uncompressed data
+            out.write(data);
+            return uncompressed.toByteArray();
+        }
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        Deflater deflater = new Deflater(Deflater.DEFAULT_COMPRESSION); // Use standard compression level
+        DataOutputStream dataOut = new DataOutputStream(byteArrayOutputStream);
+
+        // Write uncompressed length first
+        writeVarInt(dataOut, data.length);
+
+        // Compress the data
+        Deflater deflater = new Deflater(Deflater.DEFAULT_COMPRESSION);
         DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream, deflater);
+        deflaterOutputStream.write(data);
+        deflaterOutputStream.close(); // Finish compression
 
-        deflaterOutputStream.write(data); // Write original data into the compressed stream
-        deflaterOutputStream.close(); // Close the stream to finish compression
-
-        return byteArrayOutputStream.toByteArray(); // Return compressed data
+        return byteArrayOutputStream.toByteArray();
     }
 }

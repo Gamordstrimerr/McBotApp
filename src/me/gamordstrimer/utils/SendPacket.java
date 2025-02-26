@@ -2,9 +2,11 @@ package me.gamordstrimer.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Socket;
 
 public class SendPacket {
-    private OutputStream out;
+
+    private final OutputStream out;
 
     public SendPacket(OutputStream out) {
         this.out = out;

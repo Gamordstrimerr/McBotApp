@@ -72,8 +72,9 @@ public class ResponsesHandler {
             switch (packetID) {
                 case 0x03: // Set Compression
                     int compressionThreshold = PacketReader.readVarInt(dataIn);
-                    packetCompression = new PacketCompression(compressionThreshold);
-                    System.out.println("[SET_COMPRESSION] Threshold: " + compressionThreshold);
+                    packetCompression = PacketCompression.getInstance();
+                    packetCompression.setCompression(compressionThreshold);
+                    System.out.println("[SET_COMPRESSION] Threshold: " + packetCompression.getCompression());
                     break;
                 case 0x02: // Login Successful
                     String uuid = PacketReader.readString(dataIn);
@@ -127,31 +128,22 @@ public class ResponsesHandler {
     }
 
     private void sendKeepAliveResponse(int keepAliveID) throws IOException {
-        ByteArrayOutputStream tempBuffer = new ByteArrayOutputStream();
-        DataOutputStream tempPacket = new DataOutputStream(tempBuffer);
+        buffer.reset();
+        DataOutputStream tempPacket = new DataOutputStream(buffer);
 
-        // Write the Packet ID (0x00) for Keep-Alive
-        PacketWriter.writeVarInt(tempPacket, 0x00);
-        // Write the Keep-Alive ID
+        tempPacket.write(0x00);
         PacketWriter.writeVarInt(tempPacket, keepAliveID);
 
-        byte[] packetContent = tempBuffer.toByteArray(); // Get the raw packet contents
+        byte[] packetContent = buffer.toByteArray();
 
-        // Calculate total packet length (size of packetContent)
-        ByteArrayOutputStream finalBuffer = new ByteArrayOutputStream();
-        DataOutputStream finalPacket = new DataOutputStream(finalBuffer);
+        buffer.reset();
+        DataOutputStream finalePacket = new DataOutputStream(buffer);
 
-        int packetLength = packetContent.length;
+        finalePacket.write(0);
+        finalePacket.write(packetContent);
 
-        // Write total packet lenght as a VarInt
-        PacketWriter.writeVarInt(finalPacket, packetLength);
-        // Write the actual packet content
-        finalPacket.write(packetContent);
-
-        System.out.println("[KEEP_ALIVE_RESPONSE] Length: " + packetLength);
-        System.out.println("[KEEP_ALIVE_RESPONSE] Keep Alive ID: " + keepAliveID);
-
-        // Send packet
         sendPacket.sendPacket(buffer.toByteArray());
+
+        System.out.println("[KEEP_ALIVE_RESPONSE] Keep alive ID sent: " + keepAliveID);
     }
 }

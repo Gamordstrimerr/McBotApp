@@ -100,7 +100,7 @@
 #### Example :
 - If the threshold is set to `256`, the packet data would look like this:
 ```
-03 02 01 00
+03 03 02 01 00
 ```
 #### 💡 Explanation:
 - `03`: **Packet Length** (3 bytes total).

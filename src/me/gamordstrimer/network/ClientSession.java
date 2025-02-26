@@ -1,6 +1,8 @@
 package me.gamordstrimer.network;
 
+import lombok.Getter;
 import me.gamordstrimer.network.client.LoginRequest;
+import me.gamordstrimer.network.config.StoreSocket;
 import me.gamordstrimer.network.server.ResponsesHandler;
 
 import java.io.IOException;
@@ -22,7 +24,7 @@ public class ClientSession {
     private String SERVER_ADDR;
     private int SERVER_PORTS;
     private String username;
-    private Socket socket;
+    @Getter private Socket socket;
 
     private Thread listenerThread;
 
@@ -38,6 +40,8 @@ public class ClientSession {
             socket = new Socket();
             System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
             socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 10000);
+            StoreSocket storeSocket = StoreSocket.getInstance();
+            storeSocket.setSocket(socket);
             System.out.println("Connected to the server");
 
             // STEP 2 : send Login Request packet
@@ -65,5 +69,4 @@ public class ClientSession {
             System.out.println("Error closing socket: " + ex.getMessage());
         }
     }
-
 }

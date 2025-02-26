@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Objects;
 
 public class AppListener implements ActionListener {
@@ -19,6 +20,7 @@ public class AppListener implements ActionListener {
     private String SERVER_ADDR;
     private int SERVER_PORTS;
     private String username;
+    private Socket socket;
 
     private BotConfig botConfig;
 
@@ -53,7 +55,8 @@ public class AppListener implements ActionListener {
                 }
 
                 // Store the value in BotConfig.
-                botConfig = new BotConfig(SERVER_ADDR, SERVER_PORTS, username);
+                botConfig = BotConfig.getInstance();
+                botConfig.setBotConfig(SERVER_ADDR, SERVER_PORTS, username);
 
                 if (Objects.isNull(botConfig)) {
                     System.out.println("BotConfig isn't available yet.");
@@ -79,8 +82,6 @@ public class AppListener implements ActionListener {
                     client.connect();
                 }).start();
             } else if (sourceButton.getText().equals("Disconnect")) {
-                System.out.println("Disconnect button press");
-
                 try {
                     ClientDisconnectPacket64 clientDisconnect = new ClientDisconnectPacket64();
                     clientDisconnect.disconnect();
