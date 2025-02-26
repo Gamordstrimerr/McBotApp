@@ -20,7 +20,7 @@ public class McBotAppUI extends JFrame{
     private JTextField bot_username;
     private JButton connectButton;
     private JButton disconnectButton;
-    private JTextArea console;
+    @Getter private JTextPane console;
     @Getter private JTextPane server_console;
     private JTextField chat_input;
     private JButton chat_Button;

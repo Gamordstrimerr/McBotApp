@@ -58,7 +58,7 @@
           <text value="Connect"/>
         </properties>
       </component>
-      <component id="84c0a" class="javax.swing.JTextArea" binding="console">
+      <component id="e6470" class="javax.swing.JTextPane" binding="console">
         <constraints>
           <grid row="2" column="0" row-span="2" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
