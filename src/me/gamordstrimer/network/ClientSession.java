@@ -39,7 +39,7 @@ public class ClientSession {
             // STEP 1 : Create Socket and connect to the server
             socket = new Socket();
             System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
-            socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 10000);
+            socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 5000);
             StoreSocket storeSocket = StoreSocket.getInstance();
             storeSocket.setSocket(socket);
             System.out.println("Connected to the server");
@@ -54,7 +54,7 @@ public class ClientSession {
 
         } catch (IOException ex) {
             System.out.println("Connection failed : " + ex.getMessage());
-        } finally {
+        } finally { // STEP 4 : close the socket
             closeConnection();
         }
     }

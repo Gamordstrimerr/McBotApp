@@ -3,6 +3,7 @@ package me.gamordstrimer.network.config;
 import lombok.Getter;
 
 import java.net.Socket;
+
 @Getter
 public class StoreSocket {
 

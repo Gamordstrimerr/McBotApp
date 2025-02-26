@@ -27,10 +27,10 @@ public class KeepAlivePacket00 {
         byte[] packetContent = buffer.toByteArray();
 
         buffer.reset();
-        DataOutputStream finalePacket = new DataOutputStream(buffer);
+        DataOutputStream finalPacket = new DataOutputStream(buffer);
 
-        finalePacket.write(0);
-        finalePacket.write(packetContent);
+        finalPacket.write(0);
+        finalPacket.write(packetContent);
 
         sendPacket.sendPacket(buffer.toByteArray());
 

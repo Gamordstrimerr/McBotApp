@@ -19,17 +19,12 @@ public class ResponsesHandler {
     private PacketCompression packetCompression = PacketCompression.getInstance();
 
     private OutputStream out;
-    private ByteArrayOutputStream buffer;
-    private DataOutputStream packet;
 
     public ResponsesHandler(Socket socket) throws IOException {
         this.socket = socket;
 
         this.out = new DataOutputStream(socket.getOutputStream());
         this.sendPacket = new SendPacket(out);
-
-        this.buffer = new ByteArrayOutputStream();
-        this.packet = new DataOutputStream(buffer);
     }
 
     public void receiveResponse() throws IOException {
