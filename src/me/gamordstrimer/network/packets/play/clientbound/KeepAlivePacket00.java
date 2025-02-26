@@ -1,6 +1,7 @@
 package me.gamordstrimer.network.packets.play.clientbound;
 
 import me.gamordstrimer.utils.PacketWriter;
+import me.gamordstrimer.utils.SendPacket;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -8,13 +9,31 @@ import java.io.IOException;
 
 public class KeepAlivePacket00 {
 
-    int keepAliveID;
+    private SendPacket sendPacket;
+    private ByteArrayOutputStream buffer;
 
-    public void sendKeepAlivePacket(ByteArrayOutputStream buffer, int keepAliveID) throws IOException {
+    public KeepAlivePacket00(SendPacket sendPacket) {
+        this.sendPacket = sendPacket;
+        this.buffer = new ByteArrayOutputStream();
+    }
+
+    public void sendKeepAliveResponse(int keepAliveID) throws IOException {
         buffer.reset();
-        DataOutputStream packet = new DataOutputStream(buffer);
+        DataOutputStream tempPacket = new DataOutputStream(buffer);
 
-        PacketWriter.writeVarInt(packet, 0x00);
-        PacketWriter.writeVarInt(packet, keepAliveID);
+        tempPacket.write(0x00);
+        PacketWriter.writeVarInt(tempPacket, keepAliveID);
+
+        byte[] packetContent = buffer.toByteArray();
+
+        buffer.reset();
+        DataOutputStream finalePacket = new DataOutputStream(buffer);
+
+        finalePacket.write(0);
+        finalePacket.write(packetContent);
+
+        sendPacket.sendPacket(buffer.toByteArray());
+
+        System.out.println("[KEEP_ALIVE_RESPONSE] Keep alive ID sent: " + keepAliveID);
     }
 }

@@ -1,9 +1,10 @@
 package me.gamordstrimer.network.server;
 
 import me.gamordstrimer.network.config.PacketCompression;
+import me.gamordstrimer.network.packets.login.serverbound.SetCompressionPacket03;
+import me.gamordstrimer.network.packets.play.clientbound.KeepAlivePacket00;
 import me.gamordstrimer.network.state.ConnectionState;
 import me.gamordstrimer.utils.PacketReader;
-import me.gamordstrimer.utils.PacketWriter;
 import me.gamordstrimer.utils.SendPacket;
 
 import java.io.*;
@@ -15,7 +16,7 @@ public class ResponsesHandler {
 
     private SendPacket sendPacket;
     private ConnectionState connectionState = ConnectionState.LOGIN;
-    private PacketCompression packetCompression;
+    private PacketCompression packetCompression = PacketCompression.getInstance();
 
     private OutputStream out;
     private ByteArrayOutputStream buffer;
@@ -72,9 +73,7 @@ public class ResponsesHandler {
             switch (packetID) {
                 case 0x03: // Set Compression
                     int compressionThreshold = PacketReader.readVarInt(dataIn);
-                    packetCompression = PacketCompression.getInstance();
-                    packetCompression.setCompression(compressionThreshold);
-                    System.out.println("[SET_COMPRESSION] Threshold: " + packetCompression.getCompression());
+                    SetCompressionPacket03.setCompression(compressionThreshold);
                     break;
                 case 0x02: // Login Successful
                     String uuid = PacketReader.readString(dataIn);
@@ -107,7 +106,8 @@ public class ResponsesHandler {
                     System.out.println("[RECEIVED KEEP_ALIVE] Received ID: " + keepAliveID);
 
                     // Respond to the Keep-Alive packet by sending back the same ID
-                    sendKeepAliveResponse(keepAliveID);
+                    KeepAlivePacket00 keepAlivePacket00 = new KeepAlivePacket00(sendPacket);
+                    keepAlivePacket00.sendKeepAliveResponse(keepAliveID);
                     break;
                 case 0x02: // Chat message
                     // Handle chat messages (if necessary)
@@ -125,25 +125,5 @@ public class ResponsesHandler {
                     break;
             }
         }
-    }
-
-    private void sendKeepAliveResponse(int keepAliveID) throws IOException {
-        buffer.reset();
-        DataOutputStream tempPacket = new DataOutputStream(buffer);
-
-        tempPacket.write(0x00);
-        PacketWriter.writeVarInt(tempPacket, keepAliveID);
-
-        byte[] packetContent = buffer.toByteArray();
-
-        buffer.reset();
-        DataOutputStream finalePacket = new DataOutputStream(buffer);
-
-        finalePacket.write(0);
-        finalePacket.write(packetContent);
-
-        sendPacket.sendPacket(buffer.toByteArray());
-
-        System.out.println("[KEEP_ALIVE_RESPONSE] Keep alive ID sent: " + keepAliveID);
     }
 }
