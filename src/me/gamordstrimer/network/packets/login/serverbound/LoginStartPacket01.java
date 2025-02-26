@@ -1,4 +1,4 @@
-package me.gamordstrimer.network.packets.login.clientbound;
+package me.gamordstrimer.network.packets.login.serverbound;
 
 public class LoginStartPacket01 {
 

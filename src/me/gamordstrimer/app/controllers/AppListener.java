@@ -2,8 +2,7 @@ package me.gamordstrimer.app.controllers;
 
 import me.gamordstrimer.network.config.ConnectionConfig;
 import me.gamordstrimer.network.ClientSession;
-import me.gamordstrimer.network.packets.play.clientbound.DisconnectPacket64;
-import me.gamordstrimer.utils.SendPacket;
+import me.gamordstrimer.network.packets.play.serverbound.ChatMessagePacket01;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,18 +15,21 @@ public class AppListener implements ActionListener {
     private JTextField server_address_field;
     private JTextField server_port_field;
     private JTextField username_field;
+    private JTextField chat_input;
 
     private String SERVER_ADDR;
     private int SERVER_PORTS;
     private String username;
+    private String chat_message;
 
     private ConnectionConfig connectionConfig;
     private ClientSession clientSession;
 
-    public AppListener(JTextField server_address_field, JTextField server_port_field, JTextField username_field) {
+    public AppListener(JTextField server_address_field, JTextField server_port_field, JTextField username_field, JTextField chat_input) {
         this.server_address_field = server_address_field;
         this.server_port_field = server_port_field;
         this.username_field = username_field;
+        this.chat_input = chat_input;
     }
 
     @Override
@@ -83,9 +85,22 @@ public class AppListener implements ActionListener {
                 new Thread(clientSession::connect).start();
 
             } else if (sourceButton.getText().equals("Disconnect")) {
+
+            } else if (sourceButton.getText().equals("Send")) {
+                if (chat_input.getText().isEmpty() || chat_input.getText().equals("> send a message </>")) {
+                    chat_message = "";
+                } else {
+                    chat_message = chat_input.getText();
+                }
+
+                if (chat_message == null || chat_message.isEmpty()) {
+                    System.out.println("You can't send an empty message to the server!");
+                    return;
+                }
+
                 try {
-                    DisconnectPacket64 disconnectPacket64 = new DisconnectPacket64();
-                    disconnectPacket64.sendDisconnectPacket();
+                    ChatMessagePacket01 chatMessagePacket01 = new ChatMessagePacket01();
+                    chatMessagePacket01.sendChatPacket(chat_message);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

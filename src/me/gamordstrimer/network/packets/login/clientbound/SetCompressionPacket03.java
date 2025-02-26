@@ -1,4 +1,4 @@
-package me.gamordstrimer.network.packets.login.serverbound;
+package me.gamordstrimer.network.packets.login.clientbound;
 
 import me.gamordstrimer.network.config.PacketCompression;
 

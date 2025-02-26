@@ -1,8 +1,11 @@
 package me.gamordstrimer.network.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import me.gamordstrimer.network.config.PacketCompression;
-import me.gamordstrimer.network.packets.login.serverbound.SetCompressionPacket03;
-import me.gamordstrimer.network.packets.play.clientbound.KeepAlivePacket00;
+import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
+import me.gamordstrimer.network.packets.play.clientbound.ChatMessagePacket02;
+import me.gamordstrimer.network.packets.play.serverbound.KeepAlivePacket00;
 import me.gamordstrimer.network.state.ConnectionState;
 import me.gamordstrimer.utils.PacketReader;
 import me.gamordstrimer.utils.SendPacket;
@@ -105,7 +108,9 @@ public class ResponsesHandler {
                     keepAlivePacket00.sendKeepAliveResponse(keepAliveID);
                     break;
                 case 0x02: // Chat message
-                    // Handle chat messages (if necessary)
+                    String chatMessage = PacketReader.readString(dataIn);
+                    ChatMessagePacket02 chatMessagePacket02 = new ChatMessagePacket02();
+                    chatMessagePacket02.processIncomingMessages(chatMessage);
                     break;
                 case 0x40: // Disconnect packet
                     String reason = PacketReader.readString(dataIn);

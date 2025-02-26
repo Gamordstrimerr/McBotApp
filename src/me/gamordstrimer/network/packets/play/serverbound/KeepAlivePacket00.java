@@ -1,4 +1,4 @@
-package me.gamordstrimer.network.packets.play.clientbound;
+package me.gamordstrimer.network.packets.play.serverbound;
 
 import me.gamordstrimer.utils.PacketWriter;
 import me.gamordstrimer.utils.SendPacket;
