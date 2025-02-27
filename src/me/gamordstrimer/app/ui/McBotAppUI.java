@@ -24,7 +24,6 @@ public class McBotAppUI extends JFrame{
     @Getter private JTextPane server_console;
     private JTextField chat_input;
     private JButton chat_Button;
-    private JScrollPane consoleScrollPane;
 
     public McBotAppUI() {
         instance = this;
@@ -51,11 +50,6 @@ public class McBotAppUI extends JFrame{
         chat_Button.setFocusable(false);
 
         console.setEditable(false);
-        JScrollPane consoleScrollPane = new JScrollPane(console);
-        consoleScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        consoleScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        add(consoleScrollPane);
 
         server_console.setEditable(false);
 

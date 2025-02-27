@@ -1,0 +1,22 @@
+#addressLabel {
+    -fx-font-size: 20;
+}
+
+#disconnect_button {
+
+}
+
+#connect_button {
+
+}
+
+#address_field {}
+#ports_field {}
+#username_field {}
+
+#console {
+    -fx-background-color: #4A4A48;
+}
+#server_console {
+    -fx-background-color: #4A4A48;
+}

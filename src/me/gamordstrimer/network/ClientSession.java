@@ -26,7 +26,7 @@ public class ClientSession {
     private String username;
     @Getter private Socket socket;
 
-    private Thread listenerThread;
+    private boolean stopRequest = false;
 
     public ClientSession(String SERVER_ADDR, int SERVER_PORTS, String username) {
         this.SERVER_ADDR = SERVER_ADDR;
@@ -35,27 +35,29 @@ public class ClientSession {
     }
 
     public void connect() {
-        try {
-            // STEP 1 : Create Socket and connect to the server
-            socket = new Socket();
-            System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
-            socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 5000);
-            StoreSocket storeSocket = StoreSocket.getInstance();
-            storeSocket.setSocket(socket);
-            System.out.println("Connected to the server");
+        while (!stopRequest) {
+            try {
+                // STEP 1 : Create Socket and connect to the server
+                socket = new Socket();
+                System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
+                socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 5000);
+                StoreSocket storeSocket = StoreSocket.getInstance();
+                storeSocket.setSocket(socket);
+                System.out.println("Connected to the server");
 
-            // STEP 2 : send Login Request packet
-            LoginRequest loginRequest = new LoginRequest(socket, SERVER_ADDR, SERVER_PORTS);
-            loginRequest.sendLoginRequest(username);
+                // STEP 2 : send Login Request packet
+                LoginRequest loginRequest = new LoginRequest(socket, SERVER_ADDR, SERVER_PORTS);
+                loginRequest.sendLoginRequest(username);
 
-            // STEP 3 : Listen For Response(s)
-            ResponsesHandler responsesHandler = new ResponsesHandler(socket);
-            responsesHandler.receiveResponse();
+                // STEP 3 : Listen For Response(s)
+                ResponsesHandler responsesHandler = new ResponsesHandler(socket);
+                responsesHandler.receiveResponse();
 
-        } catch (IOException ex) {
-            System.out.println("Connection failed : " + ex.getMessage());
-        } finally { // STEP 4 : close the socket
-            closeConnection();
+            } catch (IOException ex) {
+                System.out.println("Connection failed : " + ex.getMessage());
+            } finally { // STEP 4 : close the socket
+                closeConnection();
+            }
         }
     }
 
@@ -68,5 +70,9 @@ public class ClientSession {
         } catch (IOException ex) {
             System.out.println("Error closing socket: " + ex.getMessage());
         }
+    }
+
+    public void stopConnection() {
+        stopRequest = true;
     }
 }
