@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.TextFlow?>
 
-<?import javafx.scene.control.ScrollPane?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/1.8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.gamordstrimer.app.controllers.AppController">
    <children>
       <Button fx:id="disconnect_button" layoutX="874.0" layoutY="30.0" mnemonicParsing="false" onAction="#disconnect" prefHeight="30.0" prefWidth="120.0" text="Disconnect" />
@@ -15,10 +15,14 @@
       <TextField fx:id="username_field" layoutX="470.0" layoutY="30.0" prefHeight="30.0" prefWidth="200.0" />
       <ScrollPane fx:id="consoleScrollPane" layoutX="30.0" layoutY="70.0" maxHeight="500.0" maxWidth="495.0" prefHeight="500.0" prefWidth="495.0">
          <content>
-            <TextFlow fx:id="console" />
+            <TextFlow fx:id="console" prefHeight="499.0" prefWidth="493.0" />
          </content>
       </ScrollPane>
-      <TextFlow fx:id="server_console" layoutX="528.0" layoutY="70.0" maxHeight="470.0" maxWidth="465.0" prefHeight="470.0" prefWidth="465.0" />
+      <ScrollPane fx:id="serverConsoleScrollPane" layoutX="528.0" layoutY="70.0" maxHeight="470.0" maxWidth="465.0" prefHeight="470.0" prefWidth="465.0">
+         <content>
+            <TextFlow fx:id="server_console" prefHeight="469.0" prefWidth="463.0" />
+         </content>
+      </ScrollPane>
       <TextField fx:id="chat_input_field" layoutX="528.0" layoutY="540.0" prefHeight="30.0" prefWidth="398.0" />
       <Button fx:id="send_button" layoutX="927.0" layoutY="540.0" mnemonicParsing="false" onAction="#sendChat" prefHeight="30.0" prefWidth="67.0" text="Send" />
    </children>

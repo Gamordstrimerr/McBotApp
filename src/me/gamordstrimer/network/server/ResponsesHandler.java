@@ -1,6 +1,7 @@
 package me.gamordstrimer.network.server;
 
 import me.gamordstrimer.app.controllers.AppController;
+import me.gamordstrimer.app.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
 import me.gamordstrimer.network.packets.play.clientbound.ChatMessagePacket02;
@@ -19,7 +20,7 @@ public class ResponsesHandler {
     private SendPacket sendPacket;
     private ConnectionState connectionState = ConnectionState.LOGIN;
     private PacketCompression packetCompression = PacketCompression.getInstance();
-    private AppController appController;
+    private ConsolePrinter consolePrinter;
 
     private OutputStream out;
 
@@ -28,7 +29,7 @@ public class ResponsesHandler {
 
         this.out = new DataOutputStream(socket.getOutputStream());
         this.sendPacket = new SendPacket(out);
-        this.appController = new AppController();
+        this.consolePrinter = ConsolePrinter.getInstance();
     }
 
     public void receiveResponse() throws IOException {
@@ -102,7 +103,7 @@ public class ResponsesHandler {
             switch (packetID) {
                 case 0x00: // Keep-Alive Packet
                     int keepAliveID = PacketReader.readVarInt(dataIn);
-                    appController.NormalMessage("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
+                    consolePrinter.NormalMessage("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
                     // System.out.println("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
 
                     // Respond to the Keep-Alive packet by sending back the same ID

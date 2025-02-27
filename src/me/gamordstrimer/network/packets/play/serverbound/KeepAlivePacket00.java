@@ -1,6 +1,7 @@
 package me.gamordstrimer.network.packets.play.serverbound;
 
 import me.gamordstrimer.app.controllers.AppController;
+import me.gamordstrimer.app.controllers.ConsolePrinter;
 import me.gamordstrimer.utils.PacketWriter;
 import me.gamordstrimer.utils.SendPacket;
 
@@ -11,14 +12,14 @@ import java.io.IOException;
 public class KeepAlivePacket00 {
 
     private SendPacket sendPacket;
-    private AppController appController;
+    private ConsolePrinter consolePrinter;
 
     private ByteArrayOutputStream buffer;
 
     public KeepAlivePacket00(SendPacket sendPacket) {
         this.sendPacket = sendPacket;
         this.buffer = new ByteArrayOutputStream();
-        this.appController = new AppController();
+        this.consolePrinter = ConsolePrinter.getInstance();
     }
 
     public void sendKeepAliveResponse(int keepAliveID) throws IOException {
@@ -39,6 +40,6 @@ public class KeepAlivePacket00 {
         sendPacket.sendPacket(buffer.toByteArray());
 
         // System.out.println("[SENT_KEEP_ALIVE] Keep alive ID sent: " + keepAliveID);
-        appController.NormalMessage("[SENT_KEEP_ALIVE] Keep alive ID sent: " + keepAliveID);
+        consolePrinter.NormalMessage("[SENT_KEEP_ALIVE] Keep alive ID sent: " + keepAliveID);
     }
 }

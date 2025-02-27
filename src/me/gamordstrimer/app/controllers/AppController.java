@@ -30,6 +30,12 @@ public class AppController {
     private ConnectionConfig connectionConfig;
     private ClientSession clientSession;
 
+    @FXML
+    public void initialize() {
+        // Initialize the other class and pass the reference of TextFlow
+        ConsolePrinter.getInstance().setConsoleComponents(console, consoleScrollPane);
+    }
+
     public void connect(ActionEvent event) {
         if (address_field.getText().isEmpty()) {
             SERVER_ADDR = "";
@@ -113,39 +119,5 @@ public class AppController {
         }
 
         System.out.println("[ACTION] send chat");
-    }
-
-    // ========================================================================
-    // Handle console message for Error, Warning, Message, ...
-    // ========================================================================
-
-    // Normal Message
-    public void NormalMessage(String message) {
-        message = "✔ " + message + "\n";
-        printMessageToConsole(message, javafx.scene.paint.Color.GREEN);
-    }
-
-    // Print warning
-    public void WarningMessage(String message) {
-        message = "⚠ " + message + "\n";
-        printMessageToConsole(message, javafx.scene.paint.Color.ORANGE);
-    }
-
-    // Print Error
-    public void ErrorMessage(String message) {
-        message = "✖ " + message + "\n";
-        printMessageToConsole(message, javafx.scene.paint.Color.RED);
-    }
-
-    private void printMessageToConsole(String message, javafx.scene.paint.Color color) {
-        // Create a Text object with the message and set its color
-        Text text = new Text(message);
-        text.setFill(color);
-
-        // Add the Text object to the TextFlow (console)
-        console.getChildren().add(text);
-
-        // Scroll to the bottom of the ScrollPane
-        consoleScrollPane.setVvalue(1.0);  // This scrolls to the bottom of the ScrollPane
     }
 }
