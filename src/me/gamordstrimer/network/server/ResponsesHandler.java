@@ -2,6 +2,7 @@ package me.gamordstrimer.network.server;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.gamordstrimer.app.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
 import me.gamordstrimer.network.packets.play.clientbound.ChatMessagePacket02;
@@ -20,6 +21,7 @@ public class ResponsesHandler {
     private SendPacket sendPacket;
     private ConnectionState connectionState = ConnectionState.LOGIN;
     private PacketCompression packetCompression = PacketCompression.getInstance();
+    private ConsolePrinter consolePrinter;
 
     private OutputStream out;
 
@@ -28,6 +30,7 @@ public class ResponsesHandler {
 
         this.out = new DataOutputStream(socket.getOutputStream());
         this.sendPacket = new SendPacket(out);
+        this.consolePrinter = new ConsolePrinter();
     }
 
     public void receiveResponse() throws IOException {
@@ -101,7 +104,7 @@ public class ResponsesHandler {
             switch (packetID) {
                 case 0x00: // Keep-Alive Packet
                     int keepAliveID = PacketReader.readVarInt(dataIn);
-                    System.out.println("[RECEIVED KEEP_ALIVE] Received ID: " + keepAliveID);
+                    consolePrinter.NormalMessage("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
 
                     // Respond to the Keep-Alive packet by sending back the same ID
                     KeepAlivePacket00 keepAlivePacket00 = new KeepAlivePacket00(sendPacket);
@@ -110,7 +113,8 @@ public class ResponsesHandler {
                 case 0x02: // Chat message
                     String chatMessage = PacketReader.readString(dataIn);
                     ChatMessagePacket02 chatMessagePacket02 = new ChatMessagePacket02();
-                    chatMessagePacket02.processIncomingMessages(chatMessage);
+                    chatMessagePacket02.debugChatMessage(chatMessage);
+                    // chatMessagePacket02.processIncomingMessages(chatMessage);
                     break;
                 case 0x40: // Disconnect packet
                     String reason = PacketReader.readString(dataIn);

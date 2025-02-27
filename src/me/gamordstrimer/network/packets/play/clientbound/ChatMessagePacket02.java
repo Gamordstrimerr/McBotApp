@@ -81,7 +81,7 @@ public class ChatMessagePacket02 {
 
 
     // Method for debug Message Reception
-    private void debugChatMessage(String chatMessage) {
+    public void debugChatMessage(String chatMessage) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             // Convert the JSON string to a readable (pretty) format
