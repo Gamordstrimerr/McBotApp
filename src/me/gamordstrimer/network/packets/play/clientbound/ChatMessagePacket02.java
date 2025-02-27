@@ -2,7 +2,6 @@ package me.gamordstrimer.network.packets.play.clientbound;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.gamordstrimer.app.ui.McBotAppUI;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -20,7 +19,7 @@ public class ChatMessagePacket02 {
             JsonNode extraNode = rootNode.path("extra");
 
             if (extraNode.isArray() && extraNode.size() > 0) {
-                McBotAppUI appUI = McBotAppUI.getInstance();
+                /*McBotAppUI appUI = McBotAppUI.getInstance();
                 if (appUI != null) {
                     JTextPane serverConsole = appUI.getServer_console();
                     if (serverConsole != null) {
@@ -39,6 +38,8 @@ public class ChatMessagePacket02 {
                 } else {
                     System.out.println("Instance AppUI is Null.");
                 }
+                
+                 */
             }
         } catch (Exception ex) {
             ex.printStackTrace();
