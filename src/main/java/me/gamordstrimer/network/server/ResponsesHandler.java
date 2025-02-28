@@ -102,7 +102,7 @@ public class ResponsesHandler {
             switch (packetID) {
                 case 0x00: // Keep-Alive Packet
                     int keepAliveID = PacketReader.readVarInt(dataIn);
-                    consolePrinter.NormalMessage("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
+                    // consolePrinter.NormalMessage("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
                     // System.out.println("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
 
                     // Respond to the Keep-Alive packet by sending back the same ID
@@ -112,8 +112,8 @@ public class ResponsesHandler {
                 case 0x02: // Chat message
                     String chatMessage = PacketReader.readString(dataIn);
                     ChatMessagePacket02 chatMessagePacket02 = new ChatMessagePacket02();
-                    chatMessagePacket02.debugChatMessage(chatMessage);
-                    // chatMessagePacket02.processIncomingMessages(chatMessage);
+                    // chatMessagePacket02.debugChatMessage(chatMessage);
+                    chatMessagePacket02.processIncomingMessages(chatMessage);
                     break;
                 case 0x40: // Disconnect packet
                     String reason = PacketReader.readString(dataIn);

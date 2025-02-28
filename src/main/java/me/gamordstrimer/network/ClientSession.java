@@ -48,7 +48,8 @@ public class ClientSession {
                 socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 5000);
                 StoreSocket storeSocket = StoreSocket.getInstance();
                 storeSocket.setSocket(socket);
-                System.out.println("Connected to the server");
+                // System.out.println("Connected to the server");
+                consolePrinter.NormalMessage("Connected to the server");
 
                 // STEP 2 : send Login Request packet
                 LoginRequest loginRequest = new LoginRequest(socket, SERVER_ADDR, SERVER_PORTS);

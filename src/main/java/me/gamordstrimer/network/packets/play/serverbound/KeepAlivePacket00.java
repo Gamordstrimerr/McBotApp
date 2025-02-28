@@ -39,6 +39,6 @@ public class KeepAlivePacket00 {
         sendPacket.sendPacket(buffer.toByteArray());
 
         // System.out.println("[SENT_KEEP_ALIVE] Keep alive ID sent: " + keepAliveID);
-        consolePrinter.NormalMessage("[SENT_KEEP_ALIVE] Keep alive ID sent: " + keepAliveID);
+        // consolePrinter.NormalMessage("[SENT_KEEP_ALIVE] Keep alive ID sent: " + keepAliveID);
     }
 }
