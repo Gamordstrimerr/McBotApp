@@ -30,20 +30,20 @@ public class ConsolePrinter {
 
     public void NormalMessage(String message) {
         message = "✔ " + message + "\n";
-        printMessageToConsole(message, javafx.scene.paint.Color.GREEN);
+        printMessageToConsole(message, javafx.scene.paint.Color.GREEN, false);
     }
 
     public void WarningMessage(String message) {
         message = "🔔 " + message + "\n";
-        printMessageToConsole(message, javafx.scene.paint.Color.ORANGE);
+        printMessageToConsole(message, javafx.scene.paint.Color.ORANGE, true);
     }
 
     public void ErrorMessage(String message) {
         message = "❌ " + message + "\n";
-        printMessageToConsole(message, javafx.scene.paint.Color.RED);
+        printMessageToConsole(message, javafx.scene.paint.Color.RED, true);
     }
 
-    private void printMessageToConsole(String message, javafx.scene.paint.Color color) {
+    private void printMessageToConsole(String message, javafx.scene.paint.Color color, boolean bold) {
         if (console == null || consoleScrollPane == null) {
             System.err.println("ConsolePrinter UI components are not initialized!");
             return;
@@ -52,6 +52,12 @@ public class ConsolePrinter {
         Platform.runLater(() -> {
             Text text = new Text(message);
             text.setFill(color);
+
+            // Make the text bold if the bold flag is true
+            if (bold) {
+                text.setStyle("-fx-font-weight: bold;");
+            }
+
             console.getChildren().add(text);
             // consoleScrollPane.setVvalue(1.0);
         });

@@ -18,8 +18,12 @@ public class AppController {
     @FXML private TextField ports_field;
     @FXML private TextField username_field;
     @FXML private TextField chat_input_field;
+
     @FXML private TextFlow console;
     @FXML private ScrollPane consoleScrollPane;
+
+    @FXML private TextFlow server_console;
+    @FXML private ScrollPane serverConsoleScrollPane;
 
     private String SERVER_ADDR;
     private int SERVER_PORTS;
@@ -29,12 +33,15 @@ public class AppController {
     private ConnectionConfig connectionConfig;
     private ClientSession clientSession;
     private ConsolePrinter consolePrinter;
+    private ServerConsolePrinter serverConsolePrinter;
 
     @FXML
     public void initialize() {
         // Initialize the other class and pass the reference of TextFlow
         this.consolePrinter = ConsolePrinter.getInstance();
+        this.serverConsolePrinter = ServerConsolePrinter.getInstance();
         consolePrinter.setConsoleComponents(console, consoleScrollPane);
+        serverConsolePrinter.setServerConsoleComponents(server_console, serverConsoleScrollPane);
     }
 
     public void connect(ActionEvent event) {
@@ -81,12 +88,9 @@ public class AppController {
             System.out.println("[ERROR] Can't Start without a username.");
             return;
         }
-        consolePrinter.ErrorMessage("> Server Address: " + connectionConfig.getSERVER_ADDR());
-        consolePrinter.ErrorMessage("> Server Ports: " + connectionConfig.getSERVER_PORTS());
-        consolePrinter.ErrorMessage("> Username of the Bot: " + connectionConfig.getUsername());
-        System.out.println("> Server Address: " + connectionConfig.getSERVER_ADDR());
-        System.out.println("> Server Ports: " + connectionConfig.getSERVER_PORTS());
-        System.out.println("> Username of the Bot: " + connectionConfig.getUsername());
+        consolePrinter.NormalMessage("> Server Address: " + connectionConfig.getSERVER_ADDR());
+        consolePrinter.NormalMessage("> Server Ports: " + connectionConfig.getSERVER_PORTS());
+        consolePrinter.NormalMessage("> Username of the Bot: " + connectionConfig.getUsername());
 
         // Initialize clientSession BEFORE starting the thread
         clientSession = new ClientSession(connectionConfig.getSERVER_ADDR(), connectionConfig.getSERVER_PORTS(), connectionConfig.getUsername());
