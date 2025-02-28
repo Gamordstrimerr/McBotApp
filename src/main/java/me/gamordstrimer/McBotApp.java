@@ -12,10 +12,10 @@ public class McBotApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("app/ui/McBotAppUI.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/McBotAppUI.fxml"));
             Scene scene = new Scene(root);
             // scene.getStylesheets().add(getClass().getResource("app/ui/McBotAppUI.css").toExternalForm());
-            String css = this.getClass().getResource("app/ui/McBotAppUI.css").toExternalForm();
+            String css = this.getClass().getResource("/McBotAppUI.css").toExternalForm();
             scene.getStylesheets().add(css);
             stage.setScene(scene);
             stage.setTitle("MINECRAFT BOT APPLICATION");

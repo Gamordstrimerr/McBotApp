@@ -1,10 +1,9 @@
-package me.gamordstrimer.app.controllers;
+package me.gamordstrimer.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import me.gamordstrimer.network.ClientSession;
 import me.gamordstrimer.network.config.ConnectionConfig;
@@ -29,11 +28,13 @@ public class AppController {
 
     private ConnectionConfig connectionConfig;
     private ClientSession clientSession;
+    private ConsolePrinter consolePrinter;
 
     @FXML
     public void initialize() {
         // Initialize the other class and pass the reference of TextFlow
-        ConsolePrinter.getInstance().setConsoleComponents(console, consoleScrollPane);
+        this.consolePrinter = ConsolePrinter.getInstance();
+        consolePrinter.setConsoleComponents(console, consoleScrollPane);
     }
 
     public void connect(ActionEvent event) {
@@ -80,6 +81,9 @@ public class AppController {
             System.out.println("[ERROR] Can't Start without a username.");
             return;
         }
+        consolePrinter.ErrorMessage("> Server Address: " + connectionConfig.getSERVER_ADDR());
+        consolePrinter.ErrorMessage("> Server Ports: " + connectionConfig.getSERVER_PORTS());
+        consolePrinter.ErrorMessage("> Username of the Bot: " + connectionConfig.getUsername());
         System.out.println("> Server Address: " + connectionConfig.getSERVER_ADDR());
         System.out.println("> Server Ports: " + connectionConfig.getSERVER_PORTS());
         System.out.println("> Username of the Bot: " + connectionConfig.getUsername());

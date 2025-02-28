@@ -1,0 +1,30 @@
+/*
+--main-color: #192e42;
+--second-color: #253b52;
+--third-color: #335574;
+*/
+#addressLabel {
+    -fx-font-size: 20;
+}
+
+#disconnect_button {
+
+}
+
+#connect_button {
+
+}
+
+#address_field {}
+#ports_field {}
+#username_field {}
+
+#console {
+    -fx-font-family: "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    -fx-background-color: #4f4f4f;
+    -fx-font-size: 16;
+}
+#server_console {
+    -fx-background-color: #4f4f4f;
+}
+

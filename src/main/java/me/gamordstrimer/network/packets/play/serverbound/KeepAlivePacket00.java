@@ -1,7 +1,6 @@
 package me.gamordstrimer.network.packets.play.serverbound;
 
-import me.gamordstrimer.app.controllers.AppController;
-import me.gamordstrimer.app.controllers.ConsolePrinter;
+import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.utils.PacketWriter;
 import me.gamordstrimer.utils.SendPacket;
 

@@ -1,6 +1,7 @@
 package me.gamordstrimer.network;
 
 import lombok.Getter;
+import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.client.LoginRequest;
 import me.gamordstrimer.network.config.StoreSocket;
 import me.gamordstrimer.network.server.ResponsesHandler;
@@ -26,12 +27,15 @@ public class ClientSession {
     private String username;
     @Getter private Socket socket;
 
+    private ConsolePrinter consolePrinter;
+
     private boolean stopRequest = false;
 
     public ClientSession(String SERVER_ADDR, int SERVER_PORTS, String username) {
         this.SERVER_ADDR = SERVER_ADDR;
         this.SERVER_PORTS = SERVER_PORTS;
         this.username = username;
+        this.consolePrinter = ConsolePrinter.getInstance();
     }
 
     public void connect() {
@@ -39,7 +43,8 @@ public class ClientSession {
             try {
                 // STEP 1 : Create Socket and connect to the server
                 socket = new Socket();
-                System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
+                consolePrinter.WarningMessage("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
+                //System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
                 socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 5000);
                 StoreSocket storeSocket = StoreSocket.getInstance();
                 storeSocket.setSocket(socket);

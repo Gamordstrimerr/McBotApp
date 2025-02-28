@@ -1,4 +1,4 @@
-package me.gamordstrimer.app.controllers;
+package me.gamordstrimer.controllers;
 
 public class ServerConsolePrinter {
 

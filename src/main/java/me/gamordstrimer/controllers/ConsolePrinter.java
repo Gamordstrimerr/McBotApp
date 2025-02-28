@@ -1,4 +1,4 @@
-package me.gamordstrimer.app.controllers;
+package me.gamordstrimer.controllers;
 
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
@@ -34,12 +34,12 @@ public class ConsolePrinter {
     }
 
     public void WarningMessage(String message) {
-        message = "⚠ " + message + "\n";
+        message = "🔔 " + message + "\n";
         printMessageToConsole(message, javafx.scene.paint.Color.ORANGE);
     }
 
     public void ErrorMessage(String message) {
-        message = "✖ " + message + "\n";
+        message = "❌ " + message + "\n";
         printMessageToConsole(message, javafx.scene.paint.Color.RED);
     }
 
@@ -53,7 +53,7 @@ public class ConsolePrinter {
             Text text = new Text(message);
             text.setFill(color);
             console.getChildren().add(text);
-            consoleScrollPane.setVvalue(1.0);
+            // consoleScrollPane.setVvalue(1.0);
         });
     }
 }

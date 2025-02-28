@@ -1,7 +1,6 @@
 package me.gamordstrimer.network.server;
 
-import me.gamordstrimer.app.controllers.AppController;
-import me.gamordstrimer.app.controllers.ConsolePrinter;
+import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
 import me.gamordstrimer.network.packets.play.clientbound.ChatMessagePacket02;
