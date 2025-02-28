@@ -191,4 +191,12 @@ public class ServerConsolePrinter {
             default: return Color.WHITE; // Default to white if unknown
         }
     }
+
+    public void clearServerConsole() {
+        if (server_console == null) {
+            System.out.println("ServerConsole UI component is not initialized!");
+            return;
+        }
+        Platform.runLater(() -> server_console.getChildren().clear());
+    }
 }

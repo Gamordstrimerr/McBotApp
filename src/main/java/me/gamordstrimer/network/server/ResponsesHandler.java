@@ -1,5 +1,7 @@
 package me.gamordstrimer.network.server;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
@@ -23,45 +25,69 @@ public class ResponsesHandler {
 
     private OutputStream out;
 
-    public ResponsesHandler(Socket socket) throws IOException {
-        this.socket = socket;
+    // Flag to control the while loop
+    @Getter private volatile boolean running = true; // volatile ensures that changes to the flag are visible across threads
 
-        this.out = new DataOutputStream(socket.getOutputStream());
-        this.sendPacket = new SendPacket(out);
+    public ResponsesHandler() {
         this.consolePrinter = ConsolePrinter.getInstance();
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+        try {
+            this.out = new DataOutputStream(socket.getOutputStream());
+            this.sendPacket = new SendPacket(out);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // Method to stop the loop when disconnect is pressed
+    public void stopReceiving() {
+        running = false; // Set the flag to false to stop the loop
     }
 
     public void receiveResponse() throws IOException {
         InputStream in = socket.getInputStream();
         DataInputStream dataIn = new DataInputStream(in);
 
-        while (true) {
-            // Read Packet length (VarInt)
-            int packetLength = PacketReader.readVarInt(dataIn);
-            if (packetLength < 0) {
-                System.out.println("Invalid packet received, stopping...");
-                break;
-            }
+        while (running && !Thread.currentThread().isInterrupted()) {
+            try {
+                // Read Packet length (VarInt)
+                int packetLength = PacketReader.readVarInt(dataIn);
+                if (packetLength < 0) {
+                    System.out.println("Invalid packet received, stopping...");
+                    break;
+                }
 
-            if (packetCompression != null && packetCompression.getCompression() > 0 ) {
-                // Read compressed packet
-                byte[] decompressedData = PacketReader.readCompressedPacket(dataIn, packetLength, packetCompression.getCompression());
+                System.out.println("loop running");
 
-                // Wrap the decompressed data in a new DataInputStream
-                DataInputStream decompressedStream = new DataInputStream(new ByteArrayInputStream(decompressedData));
+                if (packetCompression != null && packetCompression.getCompression() > 0 ) {
+                    // Read compressed packet
+                    byte[] decompressedData = PacketReader.readCompressedPacket(dataIn, packetLength, packetCompression.getCompression());
 
-                int packetID = PacketReader.readVarInt(decompressedStream);
-                // System.out.println("Received decompressed packet ID: 0x" + String.format("%02X", packetID) + " (Length: " + decompressedData.length + ")");
+                    // Wrap the decompressed data in a new DataInputStream
+                    DataInputStream decompressedStream = new DataInputStream(new ByteArrayInputStream(decompressedData));
 
-                handlePacket(packetID, decompressedStream);
-            } else {
-                // Read Packet ID (VarInt)
-                int packetID = PacketReader.readVarInt(dataIn);
-                int bytesRead = PacketReader.getLastReadVarIntSize();
+                    int packetID = PacketReader.readVarInt(decompressedStream);
+                    // System.out.println("Received decompressed packet ID: 0x" + String.format("%02X", packetID) + " (Length: " + decompressedData.length + ")");
 
-                // System.out.println("Received packet ID: 0x" + String.format("%02X", packetID) + " (Length: " + packetLength + ")");
+                    handlePacket(packetID, decompressedStream);
+                } else {
+                    // Read Packet ID (VarInt)
+                    int packetID = PacketReader.readVarInt(dataIn);
+                    int bytesRead = PacketReader.getLastReadVarIntSize();
 
-                handlePacket(packetID, dataIn);
+                    // System.out.println("Received packet ID: 0x" + String.format("%02X", packetID) + " (Length: " + packetLength + ")");
+
+                    handlePacket(packetID, dataIn);
+                }
+            } catch (IOException ex) {
+                // Handle the exception and maybe stop the loop
+                if (!running) {
+                    System.out.println("Stopping due to disconnect...");
+                    break;
+                }
             }
         }
     }
@@ -79,15 +105,15 @@ public class ResponsesHandler {
                     String username = PacketReader.readString(dataIn);
                     connectionState = ConnectionState.PLAY;
 
-                    System.out.println("[LOGIN_SUCCESS] UUID: " + uuid + ", Username: " + username);
+                    consolePrinter.NormalMessage("[LOGIN_SUCCESS] UUID: " + uuid + ", Username: " + username);
 
                     // Log the state change
-                    System.out.println("[STATE CHANGE] Connection state changed to PLAY.");
+                    consolePrinter.NormalMessage("[STATE CHANGE] Connection state changed to PLAY.");
                     break;
                 case 0x00: // Disconnected
                     String reason = PacketReader.readString(dataIn);
-                    System.out.println("[DISCONNECTED] Received disconnect packet during LOGIN state.");
-                    System.out.println("[REASON]: " + reason);
+                    consolePrinter.ErrorMessage("[DISCONNECTED] Received disconnect packet during LOGIN state.");
+                    consolePrinter.ErrorMessage("[REASON]: " + reason);
                     return;
                 default:
                     // Skip unknown packet by reading and discarding remaining bytes
@@ -95,15 +121,14 @@ public class ResponsesHandler {
                     if (availableBytes > 0) {
                         dataIn.skipBytes(availableBytes);
                     }
-                    System.out.println("[LOGIN] Unknown packet 0x" + String.format("%02X", packetID) + " received during LOGIN state.");
+                    consolePrinter.WarningMessage("[LOGIN] Unknown packet 0x" + String.format("%02X", packetID) + " received during LOGIN state.");
                     break;
             }
         } else if (connectionState == ConnectionState.PLAY) {
             switch (packetID) {
                 case 0x00: // Keep-Alive Packet
                     int keepAliveID = PacketReader.readVarInt(dataIn);
-                    // consolePrinter.NormalMessage("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
-                    // System.out.println("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
+                    consolePrinter.NormalMessage("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
 
                     // Respond to the Keep-Alive packet by sending back the same ID
                     KeepAlivePacket00 keepAlivePacket00 = new KeepAlivePacket00(sendPacket);
@@ -114,10 +139,6 @@ public class ResponsesHandler {
                     ChatMessagePacket02 chatMessagePacket02 = new ChatMessagePacket02();
                     // chatMessagePacket02.debugChatMessage(chatMessage);
                     chatMessagePacket02.processIncomingMessages(chatMessage);
-                    break;
-                case 0x40: // Disconnect packet
-                    String reason = PacketReader.readString(dataIn);
-                    System.out.println("[DISCONNECTED] Reason: " + reason);
                     break;
                 default:
                     // Skip unknown packet by reading and discarding remaining bytes

@@ -1,8 +1,14 @@
-/*
-#192e42
-#253b52
-#335574
-*/
+AnchorPane {
+    -fx-background-color: #263238;
+}
+
+Button:focused,
+TextField:focused,
+ScrollPane:focused,
+TextFlow:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
 
 #addressLabel {
     -fx-font-size: 20;
@@ -22,7 +28,7 @@
 
 #console {
     -fx-background-color: #11131d;
-    -fx-font-size: 16;
+    -fx-font-size: 14;
     -fx-padding: 0.3em;
 }
 #server_console {

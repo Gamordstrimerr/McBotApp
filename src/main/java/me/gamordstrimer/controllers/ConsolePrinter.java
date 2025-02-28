@@ -62,4 +62,12 @@ public class ConsolePrinter {
             // consoleScrollPane.setVvalue(1.0);
         });
     }
+
+    public void clearConsole() {
+        if (console == null) {
+            System.out.println("ConsolePrinter UI component is not initialized!");
+            return;
+        }
+        Platform.runLater(() -> console.getChildren().clear());
+    }
 }

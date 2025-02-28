@@ -8,8 +8,10 @@ import javafx.scene.text.TextFlow;
 import me.gamordstrimer.network.ClientSession;
 import me.gamordstrimer.network.config.ConnectionConfig;
 import me.gamordstrimer.network.packets.play.serverbound.ChatMessagePacket01;
+import me.gamordstrimer.network.server.ResponsesHandler;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Objects;
 
 public class AppController {
@@ -40,6 +42,7 @@ public class AppController {
         // Initialize the other class and pass the reference of TextFlow
         this.consolePrinter = ConsolePrinter.getInstance();
         this.serverConsolePrinter = ServerConsolePrinter.getInstance();
+        this.clientSession = new ClientSession();
         consolePrinter.setConsoleComponents(console, consoleScrollPane);
         serverConsolePrinter.setServerConsoleComponents(server_console, serverConsoleScrollPane);
     }
@@ -57,7 +60,8 @@ public class AppController {
             try {
                 SERVER_PORTS = Integer.parseInt(ports_field.getText());
             } catch (NumberFormatException ex) {
-                System.out.println("[ERROR] You need to enter a Number for the server ports.");
+                //System.out.println("[ERROR] You need to enter a Number for the server ports.");
+                consolePrinter.ErrorMessage("[ERROR] You need to enter a Number for the server ports.");
                 return;
             }catch (Exception ex) {
                 System.out.println("[ERROR]: " + ex);
@@ -77,32 +81,42 @@ public class AppController {
         connectionConfig.setConnectionConfig(SERVER_ADDR, SERVER_PORTS, USERNAME);
 
         if (Objects.isNull(connectionConfig)) {
-            System.out.println("[ERROR] BotConfig isn't available yet.");
+            //System.out.println("[ERROR] BotConfig isn't available yet.");
+            consolePrinter.ErrorMessage("[ERROR] BotConfig isn't available yet.");
             return;
         }
         if (SERVER_ADDR == null || SERVER_ADDR.isEmpty()) {
-            System.out.println("[ERROR] Can't Start without a server address.");
+            //System.out.println("[ERROR] Can't Start without a server address.");
+            consolePrinter.ErrorMessage("[ERROR] Can't Start without a server address.");
             return;
         }
         if (USERNAME == null || USERNAME.isEmpty()) {
-            System.out.println("[ERROR] Can't Start without a username.");
+            //System.out.println("[ERROR] Can't Start without a username.");
+            consolePrinter.ErrorMessage("[ERROR] Can't Start without a username.");
             return;
         }
-        consolePrinter.NormalMessage("> Server Address: " + connectionConfig.getSERVER_ADDR());
-        consolePrinter.NormalMessage("> Server Ports: " + connectionConfig.getSERVER_PORTS());
-        consolePrinter.NormalMessage("> Username of the Bot: " + connectionConfig.getUsername());
-
-        // Initialize clientSession BEFORE starting the thread
-        clientSession = new ClientSession(connectionConfig.getSERVER_ADDR(), connectionConfig.getSERVER_PORTS(), connectionConfig.getUsername());
-        // Run connection in a separate thread
-        new Thread(clientSession::connect).start();
+        Socket socket = clientSession.getSocket();
+        if (socket == null) {
+            // Initialize clientSession BEFORE starting the thread
+            clientSession.setServerInfos(SERVER_ADDR, SERVER_PORTS, USERNAME);
+            // Run connection in a separate thread
+            new Thread(clientSession::connect).start();
+        } else {
+            consolePrinter.ErrorMessage("[ERROR] You can't connect while another session is active.");
+        }
     }
 
     public void disconnect(ActionEvent event) {
         if (clientSession != null) {
-            System.out.println("Disconnecting ...");
+            ResponsesHandler responsesHandler = new ResponsesHandler();
+            if (responsesHandler != null) {
+                responsesHandler.stopReceiving(); // This will stop the while loop in ResponsesHandler
+                System.out.println("Disconnect Button press.. // Disconnection in progress...");
+                System.out.println(responsesHandler.isRunning());
+            }
         } else {
-            System.out.println("[ERROR] No active session to disconnect.");
+            consolePrinter.ErrorMessage("[ERROR] No active session to disconnect.");
+
         }
     }
 
@@ -114,7 +128,8 @@ public class AppController {
         }
 
         if (chat_message == null || chat_message.isEmpty()) {
-            System.out.println("[ERROR] You can't send an empty message to the server!");
+            consolePrinter.ErrorMessage("[ERROR] You can't send an empty message to the server!");
+            //System.out.println("[ERROR] You can't send an empty message to the server!");
             return;
         }
 
@@ -124,7 +139,5 @@ public class AppController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        System.out.println("[ACTION] send chat");
     }
 }
