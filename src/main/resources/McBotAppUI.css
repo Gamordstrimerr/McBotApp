@@ -21,11 +21,13 @@
 #username_field {}
 
 #console {
-    -fx-background-color: #4f4f4f;
+    -fx-background-color: #11131d;
     -fx-font-size: 16;
+    -fx-padding: 0.3em;
 }
 #server_console {
-    -fx-background-color: #4f4f4f;
+    -fx-background-color: #11131d;
     -fx-font-size: 14;
+    -fx-padding: 0.3em;
 }
 

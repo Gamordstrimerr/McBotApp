@@ -1,5 +1,6 @@
 package me.gamordstrimer.network.client;
 
+import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.exception.LoginRequestException;
 import me.gamordstrimer.utils.PacketWriter;
 import me.gamordstrimer.utils.SendPacket;
@@ -15,6 +16,7 @@ public class LoginRequest {
     private Socket socket;
     private OutputStream out;
     private SendPacket sendPacket;
+    private ConsolePrinter consolePrinter;
 
     private ByteArrayOutputStream buffer;
     private DataOutputStream packet;
@@ -30,6 +32,7 @@ public class LoginRequest {
 
         this.buffer = new ByteArrayOutputStream();
         this.packet = new DataOutputStream(buffer);
+        this.consolePrinter = ConsolePrinter.getInstance();
     }
 
     public void sendLoginRequest(String username) throws IOException {
@@ -79,7 +82,9 @@ public class LoginRequest {
 
         // Converte to byte array and send
         sendPacket.sendPacket(buffer.toByteArray());
-        System.out.println("Handshake packet send!");
+
+        //System.out.println("Handshake packet send!");
+        consolePrinter.NormalMessage("Handshake packet send!");
     }
 
     private void sendLoginStartPacket(String username) throws IOException {
@@ -91,6 +96,7 @@ public class LoginRequest {
 
         sendPacket.sendPacket(buffer.toByteArray());
 
-        System.out.println("Login Request sent for user: " + username);
+        // System.out.println("Login Request sent for user: " + username);
+        consolePrinter.NormalMessage("Login Request sent for user: " + username);
     }
 }

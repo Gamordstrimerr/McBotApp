@@ -29,8 +29,6 @@ public class ClientSession {
 
     private ConsolePrinter consolePrinter;
 
-    private boolean stopRequest = false;
-
     public ClientSession(String SERVER_ADDR, int SERVER_PORTS, String username) {
         this.SERVER_ADDR = SERVER_ADDR;
         this.SERVER_PORTS = SERVER_PORTS;
@@ -39,31 +37,30 @@ public class ClientSession {
     }
 
     public void connect() {
-        while (!stopRequest) {
-            try {
-                // STEP 1 : Create Socket and connect to the server
-                socket = new Socket();
-                consolePrinter.WarningMessage("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
-                //System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
-                socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 5000);
-                StoreSocket storeSocket = StoreSocket.getInstance();
-                storeSocket.setSocket(socket);
-                // System.out.println("Connected to the server");
-                consolePrinter.NormalMessage("Connected to the server");
+        try {
+            // STEP 1 : Create Socket and connect to the server
+            socket = new Socket();
+            consolePrinter.WarningMessage("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
+            //System.out.println("Attempting to connect to " + SERVER_ADDR + ":" + SERVER_PORTS);
+            socket.connect(new InetSocketAddress(SERVER_ADDR, SERVER_PORTS), 5000);
+            StoreSocket storeSocket = StoreSocket.getInstance();
+            storeSocket.setSocket(socket);
+            // System.out.println("Connected to the server");
+            consolePrinter.NormalMessage("Connection established with the server");
 
-                // STEP 2 : send Login Request packet
-                LoginRequest loginRequest = new LoginRequest(socket, SERVER_ADDR, SERVER_PORTS);
-                loginRequest.sendLoginRequest(username);
+            // STEP 2 : send Login Request packet
+            LoginRequest loginRequest = new LoginRequest(socket, SERVER_ADDR, SERVER_PORTS);
+            loginRequest.sendLoginRequest(username);
 
-                // STEP 3 : Listen For Response(s)
-                ResponsesHandler responsesHandler = new ResponsesHandler(socket);
-                responsesHandler.receiveResponse();
+            // STEP 3 : Listen For Response(s)
+            ResponsesHandler responsesHandler = new ResponsesHandler(socket);
+            responsesHandler.receiveResponse();
 
-            } catch (IOException ex) {
-                System.out.println("Connection failed : " + ex.getMessage());
-            } finally { // STEP 4 : close the socket
-                closeConnection();
-            }
+        } catch (IOException ex) {
+            // System.out.println("Connection failed : " + ex.getMessage());
+            consolePrinter.ErrorMessage("Connection failed : " + ex.getMessage());
+        } finally { // STEP 4 : close the socket
+            closeConnection();
         }
     }
 
@@ -71,14 +68,12 @@ public class ClientSession {
         try {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
-                System.out.println("Connection closed.");
+                // System.out.println("Connection closed.");
+                consolePrinter.ErrorMessage("Connection closed.");
             }
         } catch (IOException ex) {
-            System.out.println("Error closing socket: " + ex.getMessage());
+            // System.out.println("Error closing socket: " + ex.getMessage());
+            consolePrinter.ErrorMessage("Error closing socket: " + ex.getMessage());
         }
-    }
-
-    public void stopConnection() {
-        stopRequest = true;
     }
 }

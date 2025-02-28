@@ -101,7 +101,6 @@ public class AppController {
     public void disconnect(ActionEvent event) {
         if (clientSession != null) {
             System.out.println("Disconnecting ...");
-            clientSession.stopConnection(); // signal the thread to stop.
         } else {
             System.out.println("[ERROR] No active session to disconnect.");
         }
