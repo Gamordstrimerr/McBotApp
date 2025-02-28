@@ -88,7 +88,7 @@ public class ResponsesHandler {
                     String reason = PacketReader.readString(dataIn);
                     System.out.println("[DISCONNECTED] Received disconnect packet during LOGIN state.");
                     System.out.println("[REASON]: " + reason);
-                    break;
+                    return;
                 default:
                     // Skip unknown packet by reading and discarding remaining bytes
                     availableBytes = dataIn.available();

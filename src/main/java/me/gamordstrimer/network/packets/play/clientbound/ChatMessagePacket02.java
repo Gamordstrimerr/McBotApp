@@ -16,20 +16,30 @@ public class ChatMessagePacket02 {
     }
 
     public void processIncomingMessages(String chatMessage) {
-        System.out.println(chatMessage);
-        /*
-        JSONObject jsonObject = new JSONObject(chatMessage);
+        if (isPotentialJson(chatMessage)) {
+            try {
+                JSONObject jsonObject = new JSONObject(chatMessage);
 
-        String formattedJSON = jsonObject.toString(4);
-        if (jsonObject.has("extra")) {
-            Object extra = jsonObject.get("extra");
-            if (extra instanceof JSONArray) {
-                serverConsolePrinter.printChatToConsole((JSONArray) extra);
+                String formattedJSON = jsonObject.toString(4);
+                if (jsonObject.has("extra")) {
+                    Object extra = jsonObject.get("extra");
+                    if (extra instanceof JSONArray) {
+                        serverConsolePrinter.printJSONChatToConsole((JSONArray) extra);
+                    }
+                } else {
+                    consolePrinter.ErrorMessage(formattedJSON);
+                }
+            } catch (Exception ex) {
+                consolePrinter.ErrorMessage("Failed to parse JSON: " + ex.getMessage());
             }
         } else {
-            consolePrinter.ErrorMessage(formattedJSON);
+            serverConsolePrinter.printSTRINGChatToConsole(chatMessage);
         }
+    }
 
-         */
+    // Check if the String is a potential JSON message
+    private boolean isPotentialJson(String message) {
+        message = message.trim();
+        return message.startsWith("{") && message.endsWith("}");
     }
 }
