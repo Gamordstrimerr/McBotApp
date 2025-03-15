@@ -21,4 +21,8 @@ public class PacketCompression {
     public void setCompression(int compression) {
         this.compression = compression;
     }
+
+    public void resetCompression() {
+        this.compression = -1; // Reset to default (no compression)
+    }
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.controllers.ServerConsolePrinter;
 import me.gamordstrimer.network.client.LoginRequest;
+import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.config.StoreSocket;
 import me.gamordstrimer.network.server.ResponsesHandler;
 
@@ -60,16 +61,18 @@ public class ClientSession {
             LoginRequest loginRequest = new LoginRequest(socket, SERVER_ADDR, SERVER_PORTS);
             loginRequest.sendLoginRequest(username);
 
+            responsesHandler.restartLoop(); // restart the loop to listen for packet.
+
             // STEP 3 : Listen For Response(s)
             responsesHandler.setSocket(socket);
             responsesHandler.receiveResponse();
+
+            consolePrinter.ErrorMessage("Disconnecting ...");
 
         } catch (IOException ex) {
             consolePrinter.ErrorMessage("I/O Error: " + ex.getMessage());
         } catch (Exception ex) {
             consolePrinter.ErrorMessage("Unexpected error: " + ex.getMessage());
-        } finally { // STEP 4 : close the socket
-            closeConnection();
         }
     }
 
@@ -79,13 +82,20 @@ public class ClientSession {
 
     private void closeConnection() {
         try {
-            if (socket != null && !socket.isClosed()) {
-                socket.close();
-                socket = null; // Ensure socket is reset
-                // System.out.println("Connection closed.");
-                serverConsolePrinter.clearServerConsole();
-                consolePrinter.ErrorMessage("Connection closed.");
+            if (responsesHandler != null) {
+                responsesHandler.stop(); // Stop the loop before closing the socket
             }
+            if (socket != null) {
+                if (!socket.isClosed()) {
+                    socket.close();
+                }
+                socket = null; // Ensure socket is reset
+            }
+
+            PacketCompression.getInstance().resetCompression();
+
+            serverConsolePrinter.clearServerConsole();
+            consolePrinter.ErrorMessage("Connection closed.");
         } catch (IOException ex) {
             // System.out.println("Error closing socket: " + ex.getMessage());
             consolePrinter.ErrorMessage("Error closing socket: " + ex.getMessage());

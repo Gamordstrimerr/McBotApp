@@ -1,7 +1,5 @@
 package me.gamordstrimer.network.server;
 
-import lombok.Getter;
-import lombok.Setter;
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
@@ -25,8 +23,7 @@ public class ResponsesHandler {
 
     private OutputStream out;
 
-    // Flag to control the while loop
-    @Getter private volatile boolean running = true; // volatile ensures that changes to the flag are visible across threads
+    private volatile boolean running = true; // Add this to control the loop
 
     public ResponsesHandler() {
         this.consolePrinter = ConsolePrinter.getInstance();
@@ -42,16 +39,11 @@ public class ResponsesHandler {
         }
     }
 
-    // Method to stop the loop when disconnect is pressed
-    public void stopReceiving() {
-        running = false; // Set the flag to false to stop the loop
-    }
-
     public void receiveResponse() throws IOException {
         InputStream in = socket.getInputStream();
         DataInputStream dataIn = new DataInputStream(in);
 
-        while (running && !Thread.currentThread().isInterrupted()) {
+        while (running) {
             try {
                 // Read Packet length (VarInt)
                 int packetLength = PacketReader.readVarInt(dataIn);
@@ -59,35 +51,21 @@ public class ResponsesHandler {
                     System.out.println("Invalid packet received, stopping...");
                     break;
                 }
-
-                System.out.println("loop running");
-
                 if (packetCompression != null && packetCompression.getCompression() > 0 ) {
                     // Read compressed packet
                     byte[] decompressedData = PacketReader.readCompressedPacket(dataIn, packetLength, packetCompression.getCompression());
-
-                    // Wrap the decompressed data in a new DataInputStream
                     DataInputStream decompressedStream = new DataInputStream(new ByteArrayInputStream(decompressedData));
 
                     int packetID = PacketReader.readVarInt(decompressedStream);
-                    // System.out.println("Received decompressed packet ID: 0x" + String.format("%02X", packetID) + " (Length: " + decompressedData.length + ")");
-
                     handlePacket(packetID, decompressedStream);
                 } else {
                     // Read Packet ID (VarInt)
                     int packetID = PacketReader.readVarInt(dataIn);
-                    int bytesRead = PacketReader.getLastReadVarIntSize();
-
-                    // System.out.println("Received packet ID: 0x" + String.format("%02X", packetID) + " (Length: " + packetLength + ")");
-
                     handlePacket(packetID, dataIn);
                 }
             } catch (IOException ex) {
-                // Handle the exception and maybe stop the loop
-                if (!running) {
-                    System.out.println("Stopping due to disconnect...");
-                    break;
-                }
+                if (!running) break; // If stopping, exit loop
+                consolePrinter.ErrorMessage("Error receiving response: " + ex.getMessage());
             }
         }
     }
@@ -148,6 +126,24 @@ public class ResponsesHandler {
                     }
                     break;
             }
+        }
+    }
+
+    public void restartLoop() {
+        stop();
+        running = true;
+        consolePrinter.NormalMessage("Responses Handler restarted.");
+        connectionState = ConnectionState.LOGIN;
+    }
+
+    public void stop() {
+        running = false;
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            consolePrinter.ErrorMessage("Error closing socket: " + e.getMessage());
         }
     }
 }

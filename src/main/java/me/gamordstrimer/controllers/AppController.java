@@ -107,17 +107,8 @@ public class AppController {
     }
 
     public void disconnect(ActionEvent event) {
-        if (clientSession != null) {
-            ResponsesHandler responsesHandler = new ResponsesHandler();
-            if (responsesHandler != null) {
-                responsesHandler.stopReceiving(); // This will stop the while loop in ResponsesHandler
-                System.out.println("Disconnect Button press.. // Disconnection in progress...");
-                System.out.println(responsesHandler.isRunning());
-            }
-        } else {
-            consolePrinter.ErrorMessage("[ERROR] No active session to disconnect.");
-
-        }
+        consolePrinter.NormalMessage("DISCONNECTING ...");
+        clientSession.closeSocket();
     }
 
     public void sendChat(ActionEvent event) {
