@@ -21,8 +21,8 @@ public class EntityVelocityPacket18 {
 
     public void handlePlayerVelocity(DataInputStream dataIn) throws IOException {
         int playerID = StoreSessionInfos.getInstance().getEntityID();
-
         int entityID = PacketReader.readVarInt(dataIn);
+
         short velocityX = dataIn.readShort();
         short velocityY = dataIn.readShort();
         short velocityZ = dataIn.readShort();
@@ -42,7 +42,7 @@ public class EntityVelocityPacket18 {
             double currentY = StoreSessionInfos.getInstance().getCurrentY();
             double currentZ = StoreSessionInfos.getInstance().getCurrentZ();
 
-            // Calculate new position after knockback
+            // Calculate new position after movement
             double newX = currentX + velocityXBlocks;
             double newY = currentY + velocityYBlocks;
             double newZ = currentZ + velocityZBlocks;
@@ -50,14 +50,12 @@ public class EntityVelocityPacket18 {
             // Assume player is on ground if velocityY is low
             boolean onGround = velocityYBlocks < 0.01;
 
+            // Update stored player position
+            StoreSessionInfos.getInstance().updatePosition(newX, newY, newZ);
+
             // Send the updated position packet
             PlayerPositionPacket04 positionPacket = new PlayerPositionPacket04(newX, newY, newZ, onGround, sendPacket);
             positionPacket.processPlayerPosition();
-
-            // Update stored player position
-            StoreSessionInfos.getInstance().setCurrentX(newX);
-            StoreSessionInfos.getInstance().setCurrentY(newY);
-            StoreSessionInfos.getInstance().setCurrentZ(newZ);
         }
     }
 }

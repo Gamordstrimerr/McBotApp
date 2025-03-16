@@ -53,4 +53,11 @@ public class StoreSessionInfos {
         System.out.println("Pitch: " + currentPitch);
         System.out.println("Flags: " + currentFlags);
     }
+
+    public void updatePosition(double x, double y, double z) {
+        this.currentX = x;
+        this.currentY = y;
+        this.currentZ = z;
+        System.out.println("[POSITION_UPDATE] X: " + x + ", Y: " + y + ", Z: " + z);
+    }
 }

@@ -3,10 +3,7 @@ package me.gamordstrimer.network.server;
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
-import me.gamordstrimer.network.packets.play.clientbound.ChatMessagePacket02;
-import me.gamordstrimer.network.packets.play.clientbound.EntityVelocityPacket18;
-import me.gamordstrimer.network.packets.play.clientbound.JoinGamePacket01;
-import me.gamordstrimer.network.packets.play.clientbound.PlayerPositionAndLookPacket08;
+import me.gamordstrimer.network.packets.play.clientbound.*;
 import me.gamordstrimer.network.packets.play.serverbound.KeepAlivePacket00;
 import me.gamordstrimer.network.state.ConnectionState;
 import me.gamordstrimer.utils.PacketReader;
@@ -69,6 +66,7 @@ public class ResponsesHandler {
             } catch (IOException ex) {
                 if (!running) break; // If stopping, exit loop
                 consolePrinter.ErrorMessage("Error receiving response: " + ex.getMessage());
+                stop(); // Stop the loop
             }
         }
     }
@@ -122,6 +120,10 @@ public class ResponsesHandler {
                     break;
                 case 0x12: // Entity Velocity
                     new EntityVelocityPacket18(sendPacket).handlePlayerVelocity(dataIn);
+                    break;
+                case 0x40:
+                    System.out.println("receive 0x40 packet");
+                    new DisconnectPacket64().processDisconnection(dataIn);
                     break;
                 default:
                     // Skip unknown packet by reading and discarding remaining bytes

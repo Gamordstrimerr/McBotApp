@@ -26,6 +26,6 @@ public class PlayerPositionAndLookPacket08 {
         StoreSessionInfos.getInstance().setCurrentPitch(pitch);
         StoreSessionInfos.getInstance().setCurrentFlags(flags);
 
-        StoreSessionInfos.getInstance().displayCoordinate();
+        // StoreSessionInfos.getInstance().displayCoordinate();
     }
 }
