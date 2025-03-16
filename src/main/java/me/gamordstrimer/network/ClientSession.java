@@ -95,6 +95,7 @@ public class ClientSession {
             PacketCompression.getInstance().resetCompression();
 
             serverConsolePrinter.clearServerConsole();
+            consolePrinter.clearConsole();
             consolePrinter.ErrorMessage("Connection closed.");
         } catch (IOException ex) {
             // System.out.println("Error closing socket: " + ex.getMessage());

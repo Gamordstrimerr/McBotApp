@@ -26,18 +26,18 @@ public class PacketReader {
         byte read;
 
         do {
-            read = in.readByte();
-            int value = (read & 0b01111111); // Remove the MSB
-            result |= (value << (7 * numRead));
+            read = in.readByte(); // Read the next byte
+            int value = (read & 0b01111111); // Mask to keep the 7 least significant bits
+            result |= (value << (7 * numRead)); // Add the 7 bits to the result
 
             numRead++;
             if (numRead > 5) {
                 throw new IOException("VarInt is too big");
             }
-        } while ((read & 0b10000000) != 0); // Continue while MSB is 1
+        } while ((read & 0b10000000) != 0); // If MSB is 1, continue reading
 
-        lastReadVarIntSize = numRead; // Store the number of bytes read
-        return result;
+        lastReadVarIntSize = numRead; // Store the number of bytes read for the VarInt
+        return result; // Return the decoded VarInt value
     }
 
     public static byte[] readCompressedPacket(DataInputStream in, int packetLength, int compressionThreshold) throws IOException {

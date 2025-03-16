@@ -4,6 +4,9 @@ import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
 import me.gamordstrimer.network.packets.play.clientbound.ChatMessagePacket02;
+import me.gamordstrimer.network.packets.play.clientbound.EntityVelocityPacket18;
+import me.gamordstrimer.network.packets.play.clientbound.JoinGamePacket01;
+import me.gamordstrimer.network.packets.play.clientbound.PlayerPositionAndLookPacket08;
 import me.gamordstrimer.network.packets.play.serverbound.KeepAlivePacket00;
 import me.gamordstrimer.network.state.ConnectionState;
 import me.gamordstrimer.utils.PacketReader;
@@ -86,7 +89,7 @@ public class ResponsesHandler {
                     consolePrinter.NormalMessage("[LOGIN_SUCCESS] UUID: " + uuid + ", Username: " + username);
 
                     // Log the state change
-                    consolePrinter.NormalMessage("[STATE CHANGE] Connection state changed to PLAY.");
+                    consolePrinter.NormalMessage("[STATE CHANGE] Connection state ⟹ PLAY.");
                     break;
                 case 0x00: // Disconnected
                     String reason = PacketReader.readString(dataIn);
@@ -105,18 +108,20 @@ public class ResponsesHandler {
         } else if (connectionState == ConnectionState.PLAY) {
             switch (packetID) {
                 case 0x00: // Keep-Alive Packet
-                    int keepAliveID = PacketReader.readVarInt(dataIn);
-                    consolePrinter.NormalMessage("[RECEIVED_KEEP_ALIVE] Received ID: " + keepAliveID);
-
-                    // Respond to the Keep-Alive packet by sending back the same ID
-                    KeepAlivePacket00 keepAlivePacket00 = new KeepAlivePacket00(sendPacket);
-                    keepAlivePacket00.sendKeepAliveResponse(keepAliveID);
+                    new KeepAlivePacket00(sendPacket).processKeepAlivePacket(dataIn);
+                    break;
+                case 0x01: // Join Game Packet
+                    new JoinGamePacket01().processJoinGamePacket(dataIn);
                     break;
                 case 0x02: // Chat message
                     String chatMessage = PacketReader.readString(dataIn);
-                    ChatMessagePacket02 chatMessagePacket02 = new ChatMessagePacket02();
-                    // chatMessagePacket02.debugChatMessage(chatMessage);
-                    chatMessagePacket02.processIncomingMessages(chatMessage);
+                    new ChatMessagePacket02().processIncomingMessages(chatMessage);
+                    break;
+                case 0x08:
+                    new PlayerPositionAndLookPacket08().handlePlayerPositionAndLook(dataIn);
+                    break;
+                case 0x12: // Entity Velocity
+                    new EntityVelocityPacket18(sendPacket).handlePlayerVelocity(dataIn);
                     break;
                 default:
                     // Skip unknown packet by reading and discarding remaining bytes

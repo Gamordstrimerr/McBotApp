@@ -53,6 +53,9 @@ public class ConsolePrinter {
             Text text = new Text(message);
             text.setFill(color);
 
+            // Set a font that supports emojis (e.g., Segoe UI Emoji, Noto Color Emoji, or Apple Color Emoji)
+            text.setStyle("-fx-font-family: 'Segoe UI Emoji';");
+
             // Make the text bold if the bold flag is true
             if (bold) {
                 text.setStyle("-fx-font-weight: bold;");

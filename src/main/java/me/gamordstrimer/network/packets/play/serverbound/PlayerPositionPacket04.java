@@ -1,38 +1,42 @@
 package me.gamordstrimer.network.packets.play.serverbound;
 
-import me.gamordstrimer.controllers.ConsolePrinter;
-import me.gamordstrimer.utils.PacketReader;
 import me.gamordstrimer.utils.PacketWriter;
 import me.gamordstrimer.utils.SendPacket;
 
-import javax.xml.crypto.Data;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class KeepAlivePacket00 {
+public class PlayerPositionPacket04 {
+
+    private double x, y, z;
+    private boolean onGround;
 
     private SendPacket sendPacket;
-    private ConsolePrinter consolePrinter;
-
     private ByteArrayOutputStream buffer;
 
-    public KeepAlivePacket00(SendPacket sendPacket) {
+    public PlayerPositionPacket04(double x, double y, double z, boolean onGround, SendPacket sendPacket) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.onGround = onGround;
+
         this.sendPacket = sendPacket;
         this.buffer = new ByteArrayOutputStream();
-        this.consolePrinter = ConsolePrinter.getInstance();
     }
 
-    public void processKeepAlivePacket(DataInputStream dataIn) throws IOException {
-        int keepAliveID = PacketReader.readVarInt(dataIn);
+    public void processPlayerPosition() throws IOException {
 
-        // Send the response to the keep Alive Packet.
+        // Send the PlayerPositionUpdate
         buffer.reset();
         DataOutputStream tempPacket = new DataOutputStream(buffer);
 
-        tempPacket.write(0x00);
-        PacketWriter.writeVarInt(tempPacket, keepAliveID);
+        tempPacket.write(0X04);
+        tempPacket.writeDouble(x);
+        tempPacket.writeDouble(y);
+        tempPacket.writeDouble(z);
+        tempPacket.writeBoolean(onGround);
 
         byte[] packetContent = buffer.toByteArray();
 
@@ -43,6 +47,6 @@ public class KeepAlivePacket00 {
         finalPacket.write(packetContent);
 
         sendPacket.sendPacket(buffer.toByteArray());
-        consolePrinter.NormalMessage("[KEEP_ALIVE_PACKET] Server ⟺ Client (ID: " + keepAliveID +")");
+        System.out.println("Position Updated");
     }
 }
