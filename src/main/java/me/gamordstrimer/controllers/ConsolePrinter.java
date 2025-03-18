@@ -4,16 +4,19 @@ import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import me.gamordstrimer.utils.LogsManager;
 
 public class ConsolePrinter {
 
     private static ConsolePrinter instance;
+    private LogsManager logsManager;
 
     private TextFlow console;
     private ScrollPane consoleScrollPane;
 
     private ConsolePrinter() {
         // Private constructor to prevent instantiation
+        this.logsManager = LogsManager.getInstance();
     }
 
     public static ConsolePrinter getInstance() {
@@ -48,6 +51,8 @@ public class ConsolePrinter {
             System.err.println("ConsolePrinter UI components are not initialized!");
             return;
         }
+
+        logsManager.writeInLogFile(message);
 
         Platform.runLater(() -> {
             Text text = new Text(message);

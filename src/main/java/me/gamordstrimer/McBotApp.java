@@ -6,11 +6,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import me.gamordstrimer.utils.LogsManager;
 
 public class McBotApp extends Application {
 
+    private static LogsManager logsManager;
+
     @Override
     public void start(Stage stage) throws Exception {
+        logsManager = LogsManager.getInstance();
+
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/McBotAppUI.fxml"));
             Scene scene = new Scene(root);
@@ -27,6 +32,7 @@ public class McBotApp extends Application {
 
     @Override
     public void stop() throws Exception {
+        logsManager.AppClosing();
         Platform.exit();
         System.exit(0);
         super.stop();
