@@ -9,6 +9,7 @@ import me.gamordstrimer.network.ClientSession;
 import me.gamordstrimer.network.config.ConnectionConfig;
 import me.gamordstrimer.network.packets.play.serverbound.ChatMessagePacket01;
 import me.gamordstrimer.network.server.ResponsesHandler;
+import me.gamordstrimer.utils.LogsManager;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -37,6 +38,8 @@ public class AppController {
     private ConsolePrinter consolePrinter;
     private ServerConsolePrinter serverConsolePrinter;
 
+    private LogsManager logsManager;
+
     @FXML
     public void initialize() {
         // Initialize the other class and pass the reference of TextFlow
@@ -45,6 +48,7 @@ public class AppController {
         this.clientSession = new ClientSession();
         consolePrinter.setConsoleComponents(console, consoleScrollPane);
         serverConsolePrinter.setServerConsoleComponents(server_console, serverConsoleScrollPane);
+        logsManager = LogsManager.getInstance();
     }
 
     public void connect(ActionEvent event) {
@@ -130,5 +134,9 @@ public class AppController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void openLogs(ActionEvent event) {
+        logsManager.openLogsFolder();
     }
 }

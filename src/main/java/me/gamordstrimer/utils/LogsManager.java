@@ -1,5 +1,6 @@
 package me.gamordstrimer.utils;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
@@ -93,8 +94,32 @@ public class LogsManager {
         }
     }
 
-    public void AppClosing() {
-        writeInLogFile("============ APPLICATION CLOSING ============");
+    public void appClosing() {
+        writeInLogFile("============ APPLICATION CLOSING ============\n");
         archiveOldLog();
+    }
+
+    public void appStarting() {
+        writeInLogFile("============ APPLICATION STARTING ============\n");
+    }
+
+    public void openLogsFolder() {
+        File logsFolder = new File(LOGS_FOLDER);
+
+        if (!logsFolder.exists()) {
+            System.out.println("Logs folder does not exist.");
+            return;
+        }
+
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(logsFolder);
+            } else {
+                System.out.println("Desktop is not supported. Open the folder manually: " + logsFolder.getAbsolutePath());
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.err.println("Failed to open logs Folder");
+        }
     }
 }

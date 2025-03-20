@@ -15,7 +15,7 @@ public class McBotApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         logsManager = LogsManager.getInstance();
-
+        logsManager.appStarting();
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/McBotAppUI.fxml"));
             Scene scene = new Scene(root);
@@ -32,7 +32,7 @@ public class McBotApp extends Application {
 
     @Override
     public void stop() throws Exception {
-        logsManager.AppClosing();
+        logsManager.appClosing();
         Platform.exit();
         System.exit(0);
         super.stop();
