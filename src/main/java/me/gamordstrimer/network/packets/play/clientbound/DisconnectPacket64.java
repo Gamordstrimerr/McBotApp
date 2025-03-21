@@ -1,7 +1,7 @@
 package me.gamordstrimer.network.packets.play.clientbound;
 
 import me.gamordstrimer.controllers.ConsolePrinter;
-import me.gamordstrimer.utils.PacketReader;
+import me.gamordstrimer.network.packets.PacketReader;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -18,5 +18,4 @@ public class DisconnectPacket64 {
         String reason = PacketReader.readString(dataIn);
 
         consolePrinter.ErrorMessage("Disconnected: " + reason);
-    }
-}
+    }}

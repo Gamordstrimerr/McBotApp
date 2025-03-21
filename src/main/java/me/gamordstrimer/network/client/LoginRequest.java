@@ -2,8 +2,8 @@ package me.gamordstrimer.network.client;
 
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.exception.LoginRequestException;
-import me.gamordstrimer.utils.PacketWriter;
-import me.gamordstrimer.utils.SendPacket;
+import me.gamordstrimer.network.packets.PacketWriter;
+import me.gamordstrimer.network.packets.SendPacket;
 
 import java.io.*;
 import java.net.Socket;
@@ -13,22 +13,18 @@ public class LoginRequest {
     private String SERVER_ADDR;
     private int SERVER_PORTS;
 
-    private Socket socket;
-    private OutputStream out;
     private SendPacket sendPacket;
     private ConsolePrinter consolePrinter;
 
     private ByteArrayOutputStream buffer;
     private DataOutputStream packet;
 
-    public LoginRequest(Socket socket, String SERVER_ADDR, int SERVER_PORTS) throws IOException {
-        this.socket = socket;
+    public LoginRequest(String SERVER_ADDR, int SERVER_PORTS) throws IOException {
 
         this.SERVER_ADDR = SERVER_ADDR;
         this.SERVER_PORTS = SERVER_PORTS;
 
-        this.out = new DataOutputStream(socket.getOutputStream());
-        this.sendPacket = new SendPacket(out);
+        this.sendPacket = new SendPacket();
 
         this.buffer = new ByteArrayOutputStream();
         this.packet = new DataOutputStream(buffer);

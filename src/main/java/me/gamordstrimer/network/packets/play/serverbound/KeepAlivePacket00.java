@@ -1,11 +1,10 @@
 package me.gamordstrimer.network.packets.play.serverbound;
 
 import me.gamordstrimer.controllers.ConsolePrinter;
-import me.gamordstrimer.utils.PacketReader;
-import me.gamordstrimer.utils.PacketWriter;
-import me.gamordstrimer.utils.SendPacket;
+import me.gamordstrimer.network.packets.PacketReader;
+import me.gamordstrimer.network.packets.PacketWriter;
+import me.gamordstrimer.network.packets.SendPacket;
 
-import javax.xml.crypto.Data;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

@@ -58,7 +58,7 @@ public class ClientSession {
             consolePrinter.NormalMessage("Connection established with the server");
 
             // STEP 2 : send Login Request packet
-            LoginRequest loginRequest = new LoginRequest(socket, SERVER_ADDR, SERVER_PORTS);
+            LoginRequest loginRequest = new LoginRequest(SERVER_ADDR, SERVER_PORTS);
             loginRequest.sendLoginRequest(username);
 
             responsesHandler.restartLoop(); // restart the loop to listen for packet.

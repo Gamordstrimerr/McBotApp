@@ -1,28 +1,19 @@
 package me.gamordstrimer.network.packets.play.serverbound;
 
-import me.gamordstrimer.network.config.StoreSocket;
-import me.gamordstrimer.utils.PacketWriter;
-import me.gamordstrimer.utils.SendPacket;
+import me.gamordstrimer.network.packets.PacketWriter;
+import me.gamordstrimer.network.packets.SendPacket;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
 
 public class ChatMessagePacket01 {
 
     private SendPacket sendPacket;
-    private Socket socket;
-
-    private OutputStream out;
     private ByteArrayOutputStream buffer;
 
     public ChatMessagePacket01() throws IOException {
-        this.socket = StoreSocket.getInstance().getSocket();
-
-        this.out = new DataOutputStream(socket.getOutputStream());
-        this.sendPacket = new SendPacket(out);
+        this.sendPacket = new SendPacket();
 
         this.buffer = new ByteArrayOutputStream();
     }

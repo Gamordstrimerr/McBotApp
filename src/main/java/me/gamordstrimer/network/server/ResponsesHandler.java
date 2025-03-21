@@ -6,8 +6,8 @@ import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03
 import me.gamordstrimer.network.packets.play.clientbound.*;
 import me.gamordstrimer.network.packets.play.serverbound.KeepAlivePacket00;
 import me.gamordstrimer.network.state.ConnectionState;
-import me.gamordstrimer.utils.PacketReader;
-import me.gamordstrimer.utils.SendPacket;
+import me.gamordstrimer.network.packets.PacketReader;
+import me.gamordstrimer.network.packets.SendPacket;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,8 +21,6 @@ public class ResponsesHandler {
     private PacketCompression packetCompression = PacketCompression.getInstance();
     private ConsolePrinter consolePrinter;
 
-    private OutputStream out;
-
     private volatile boolean running = true; // Add this to control the loop
 
     public ResponsesHandler() {
@@ -31,12 +29,6 @@ public class ResponsesHandler {
 
     public void setSocket(Socket socket) {
         this.socket = socket;
-        try {
-            this.out = new DataOutputStream(socket.getOutputStream());
-            this.sendPacket = new SendPacket(out);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 
     public void receiveResponse() throws IOException {
@@ -114,9 +106,6 @@ public class ResponsesHandler {
                 case 0x02: // Chat message
                     String chatMessage = PacketReader.readString(dataIn);
                     new ChatMessagePacket02().processIncomingMessages(chatMessage);
-                    break;
-                case 0x08:
-                    new PlayerPositionAndLookPacket08().handlePlayerPositionAndLook(dataIn);
                     break;
                 case 0x12: // Entity Velocity
                     new EntityVelocityPacket18(sendPacket).handlePlayerVelocity(dataIn);

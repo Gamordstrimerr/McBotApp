@@ -1,7 +1,7 @@
 package me.gamordstrimer.network.packets.play.clientbound;
 
 import me.gamordstrimer.network.config.StoreSessionInfos;
-import me.gamordstrimer.utils.PacketReader;
+import me.gamordstrimer.network.packets.PacketReader;
 
 import java.io.DataInputStream;
 import java.io.IOException;

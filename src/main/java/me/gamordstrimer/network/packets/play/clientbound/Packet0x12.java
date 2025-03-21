@@ -1,25 +1,31 @@
 package me.gamordstrimer.network.packets.play.clientbound;
 
 import me.gamordstrimer.network.config.StoreSessionInfos;
-import me.gamordstrimer.network.packets.play.serverbound.PlayerPositionPacket04;
-import me.gamordstrimer.utils.PacketReader;
-import me.gamordstrimer.utils.SendPacket;
+import me.gamordstrimer.network.packets.Packet;
+import me.gamordstrimer.network.packets.PacketReader;
+import me.gamordstrimer.network.state.ConnectionState;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class EntityVelocityPacket18 {
+public class Packet0x12 extends Packet {
 
-    private SendPacket sendPacket;
-    private ByteArrayOutputStream buffer;
-
-    public EntityVelocityPacket18(SendPacket sendPacket) {
-        this.sendPacket = sendPacket;
-        this.buffer = new ByteArrayOutputStream();
+    public Packet0x12(ConnectionState state) {
+        super(state);
     }
 
-    public void handlePlayerVelocity(DataInputStream dataIn) throws IOException {
+    @Override
+    public Integer setPacketID() {
+        return 0x12;
+    }
+
+    @Override
+    public String setName() {
+        return "Velocity_packet";
+    }
+
+    @Override
+    public void handlePacket(DataInputStream dataIn) throws IOException {
         int playerID = StoreSessionInfos.getInstance().getEntityID();
         int entityID = PacketReader.readVarInt(dataIn);
 
@@ -52,10 +58,6 @@ public class EntityVelocityPacket18 {
 
             // Update stored player position
             StoreSessionInfos.getInstance().updatePosition(newX, newY, newZ);
-
-            // Send the updated position packet
-            PlayerPositionPacket04 positionPacket = new PlayerPositionPacket04(newX, newY, newZ, onGround, sendPacket);
-            positionPacket.processPlayerPosition();
         }
     }
 }

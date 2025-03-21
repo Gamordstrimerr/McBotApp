@@ -1,4 +1,4 @@
-package me.gamordstrimer.utils;
+package me.gamordstrimer.network.packets;
 
 import lombok.Getter;
 
