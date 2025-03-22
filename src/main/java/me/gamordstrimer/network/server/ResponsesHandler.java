@@ -2,9 +2,8 @@ package me.gamordstrimer.network.server;
 
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
-import me.gamordstrimer.network.packets.login.clientbound.SetCompressionPacket03;
-import me.gamordstrimer.network.packets.play.clientbound.*;
-import me.gamordstrimer.network.packets.play.serverbound.KeepAlivePacket00;
+import me.gamordstrimer.network.packets.login.CLIENT_Packet0x03_LOGIN;
+import me.gamordstrimer.network.packets.play.*;
 import me.gamordstrimer.network.state.ConnectionState;
 import me.gamordstrimer.network.packets.PacketReader;
 import me.gamordstrimer.network.packets.SendPacket;
@@ -68,8 +67,7 @@ public class ResponsesHandler {
         if (connectionState == ConnectionState.LOGIN) {
             switch (packetID) {
                 case 0x03: // Set Compression
-                    int compressionThreshold = PacketReader.readVarInt(dataIn);
-                    SetCompressionPacket03.setCompression(compressionThreshold);
+                    new CLIENT_Packet0x03_LOGIN().handlePacket(dataIn);
                     break;
                 case 0x02: // Login Successful
                     String uuid = PacketReader.readString(dataIn);
@@ -98,21 +96,20 @@ public class ResponsesHandler {
         } else if (connectionState == ConnectionState.PLAY) {
             switch (packetID) {
                 case 0x00: // Keep-Alive Packet
-                    new KeepAlivePacket00(sendPacket).processKeepAlivePacket(dataIn);
+                    new SERVER_Packet0x00_PLAY().handlePacket(dataIn);
                     break;
                 case 0x01: // Join Game Packet
-                    new JoinGamePacket01().processJoinGamePacket(dataIn);
+                    new CLIENT_Packet0x01_PLAY().handlePacket(dataIn);
                     break;
                 case 0x02: // Chat message
-                    String chatMessage = PacketReader.readString(dataIn);
-                    new ChatMessagePacket02().processIncomingMessages(chatMessage);
+                    new CLIENT_Packet0x02_PLAY().handlePacket(dataIn);
                     break;
                 case 0x12: // Entity Velocity
-                    new EntityVelocityPacket18(sendPacket).handlePlayerVelocity(dataIn);
+                    new CLIENT_Packet0x12_PLAY().handlePacket(dataIn);
                     break;
                 case 0x40:
                     System.out.println("receive 0x40 packet");
-                    new DisconnectPacket64().processDisconnection(dataIn);
+                    new CLIENT_Packet0x40_PLAY().handlePacket(dataIn);
                     break;
                 default:
                     // Skip unknown packet by reading and discarding remaining bytes

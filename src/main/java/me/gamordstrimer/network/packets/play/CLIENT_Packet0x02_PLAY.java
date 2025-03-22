@@ -1,21 +1,37 @@
-package me.gamordstrimer.network.packets.play.clientbound;
+package me.gamordstrimer.network.packets.play;
 
-import me.gamordstrimer.controllers.ConsolePrinter;
-import me.gamordstrimer.controllers.ServerConsolePrinter;
+import me.gamordstrimer.network.packets.Packet;
+import me.gamordstrimer.network.packets.PacketReader;
+import me.gamordstrimer.network.state.ConnectionState;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ChatMessagePacket02 {
+import java.io.DataInputStream;
+import java.io.IOException;
 
-    private ServerConsolePrinter serverConsolePrinter;
-    private ConsolePrinter consolePrinter;
+public class CLIENT_Packet0x02_PLAY extends Packet {
 
-    public ChatMessagePacket02() {
-        this.serverConsolePrinter = ServerConsolePrinter.getInstance();
-        this.consolePrinter = ConsolePrinter.getInstance();
+    public CLIENT_Packet0x02_PLAY() {
+        super(ConnectionState.PLAY);
     }
 
-    public void processIncomingMessages(String chatMessage) {
+    @Override
+    public Integer setPacketID() {
+        return 0x02;
+    }
+
+    @Override
+    public String setName() {
+        return "Receive_Chat_Message_Packet";
+    }
+
+    @Override
+    public void handlePacket(DataInputStream dataIn) throws IOException {
+        String chatMessage = PacketReader.readString(dataIn);
+        processIncomingMessages(chatMessage);
+    }
+
+    private void processIncomingMessages(String chatMessage) {
         if (isPotentialJson(chatMessage)) {
             try {
                 JSONObject jsonObject = new JSONObject(chatMessage);

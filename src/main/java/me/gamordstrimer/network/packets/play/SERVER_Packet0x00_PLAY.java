@@ -1,29 +1,37 @@
-package me.gamordstrimer.network.packets.play.serverbound;
+package me.gamordstrimer.network.packets.play;
 
-import me.gamordstrimer.controllers.ConsolePrinter;
+import me.gamordstrimer.network.packets.Packet;
 import me.gamordstrimer.network.packets.PacketReader;
 import me.gamordstrimer.network.packets.PacketWriter;
-import me.gamordstrimer.network.packets.SendPacket;
+import me.gamordstrimer.network.state.ConnectionState;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class KeepAlivePacket00 {
-
-    private SendPacket sendPacket;
-    private ConsolePrinter consolePrinter;
+public class SERVER_Packet0x00_PLAY extends Packet {
 
     private ByteArrayOutputStream buffer;
 
-    public KeepAlivePacket00(SendPacket sendPacket) {
-        this.sendPacket = sendPacket;
+    public SERVER_Packet0x00_PLAY() {
+        super(ConnectionState.PLAY);
+
         this.buffer = new ByteArrayOutputStream();
-        this.consolePrinter = ConsolePrinter.getInstance();
     }
 
-    public void processKeepAlivePacket(DataInputStream dataIn) throws IOException {
+    @Override
+    public Integer setPacketID() {
+        return 0x00;
+    }
+
+    @Override
+    public String setName() {
+        return "Keep_Alive_Packet";
+    }
+
+    @Override
+    public void handlePacket(DataInputStream dataIn) throws IOException {
         int keepAliveID = PacketReader.readVarInt(dataIn);
 
         // Send the response to the keep Alive Packet.

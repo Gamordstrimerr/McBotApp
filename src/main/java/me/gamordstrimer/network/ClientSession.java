@@ -3,9 +3,9 @@ package me.gamordstrimer.network;
 import lombok.Getter;
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.controllers.ServerConsolePrinter;
-import me.gamordstrimer.network.client.LoginRequest;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.config.StoreSocket;
+import me.gamordstrimer.network.packets.handshake.SERVER_Packet0x00_HANDSHAKE;
 import me.gamordstrimer.network.server.ResponsesHandler;
 
 import java.io.IOException;
@@ -58,9 +58,7 @@ public class ClientSession {
             consolePrinter.NormalMessage("Connection established with the server");
 
             // STEP 2 : send Login Request packet
-            LoginRequest loginRequest = new LoginRequest(SERVER_ADDR, SERVER_PORTS);
-            loginRequest.sendLoginRequest(username);
-
+            new SERVER_Packet0x00_HANDSHAKE().sendLoginRequest(username);
             responsesHandler.restartLoop(); // restart the loop to listen for packet.
 
             // STEP 3 : Listen For Response(s)

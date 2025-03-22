@@ -7,8 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.TextFlow;
 import me.gamordstrimer.network.ClientSession;
 import me.gamordstrimer.network.config.ConnectionConfig;
-import me.gamordstrimer.network.packets.play.serverbound.ChatMessagePacket01;
-import me.gamordstrimer.network.server.ResponsesHandler;
+import me.gamordstrimer.network.packets.play.SERVER_Packet0x01_PLAY;
 import me.gamordstrimer.utils.LogsManager;
 
 import java.io.IOException;
@@ -127,13 +126,7 @@ public class AppController {
             //System.out.println("[ERROR] You can't send an empty message to the server!");
             return;
         }
-
-        try {
-            ChatMessagePacket01 chatMessagePacket01 = new ChatMessagePacket01();
-            chatMessagePacket01.sendChatPacket(chat_message);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        new SERVER_Packet0x01_PLAY().sendChatPacket(chat_message);
     }
 
     public void openLogs(ActionEvent event) {

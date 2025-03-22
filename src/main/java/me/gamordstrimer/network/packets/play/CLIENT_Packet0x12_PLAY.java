@@ -1,4 +1,4 @@
-package me.gamordstrimer.network.packets.play.clientbound;
+package me.gamordstrimer.network.packets.play;
 
 import me.gamordstrimer.network.config.StoreSessionInfos;
 import me.gamordstrimer.network.packets.Packet;
@@ -8,10 +8,10 @@ import me.gamordstrimer.network.state.ConnectionState;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class Packet0x12 extends Packet {
+public class CLIENT_Packet0x12_PLAY extends Packet {
 
-    public Packet0x12(ConnectionState state) {
-        super(state);
+    public CLIENT_Packet0x12_PLAY() {
+        super(ConnectionState.PLAY);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class Packet0x12 extends Packet {
 
     @Override
     public String setName() {
-        return "Velocity_packet";
+        return "Velocity_Packet";
     }
 
     @Override

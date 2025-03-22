@@ -1,21 +1,31 @@
-package me.gamordstrimer.network.packets.play.serverbound;
+package me.gamordstrimer.network.packets.play;
 
+import me.gamordstrimer.network.packets.Packet;
 import me.gamordstrimer.network.packets.PacketWriter;
-import me.gamordstrimer.network.packets.SendPacket;
+import me.gamordstrimer.network.state.ConnectionState;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class ChatMessagePacket01 {
+public class SERVER_Packet0x01_PLAY extends Packet {
 
-    private SendPacket sendPacket;
     private ByteArrayOutputStream buffer;
 
-    public ChatMessagePacket01() throws IOException {
-        this.sendPacket = new SendPacket();
+    public SERVER_Packet0x01_PLAY() {
+        super(ConnectionState.PLAY);
 
         this.buffer = new ByteArrayOutputStream();
+    }
+
+    @Override
+    public Integer setPacketID() {
+        return 0x01;
+    }
+
+    @Override
+    public String setName() {
+        return "Send_Chat_Message_Packet";
     }
 
     public void sendChatPacket(String chatMessage) {

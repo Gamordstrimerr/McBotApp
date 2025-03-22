@@ -1,46 +1,35 @@
-package me.gamordstrimer.network.client;
+package me.gamordstrimer.network.packets.handshake;
 
-import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.exception.LoginRequestException;
+import me.gamordstrimer.network.packets.Packet;
 import me.gamordstrimer.network.packets.PacketWriter;
-import me.gamordstrimer.network.packets.SendPacket;
+import me.gamordstrimer.network.packets.login.SERVER_Packet0x00_LOGIN;
+import me.gamordstrimer.network.state.ConnectionState;
 
-import java.io.*;
-import java.net.Socket;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class LoginRequest {
-
-    private String SERVER_ADDR;
-    private int SERVER_PORTS;
-
-    private SendPacket sendPacket;
-    private ConsolePrinter consolePrinter;
+public class SERVER_Packet0x00_HANDSHAKE extends Packet {
 
     private ByteArrayOutputStream buffer;
     private DataOutputStream packet;
 
-    public LoginRequest(String SERVER_ADDR, int SERVER_PORTS) throws IOException {
-
-        this.SERVER_ADDR = SERVER_ADDR;
-        this.SERVER_PORTS = SERVER_PORTS;
-
-        this.sendPacket = new SendPacket();
+    public SERVER_Packet0x00_HANDSHAKE() {
+        super(ConnectionState.HANDSHAKE);
 
         this.buffer = new ByteArrayOutputStream();
         this.packet = new DataOutputStream(buffer);
-        this.consolePrinter = ConsolePrinter.getInstance();
     }
 
-    public void sendLoginRequest(String username) throws IOException {
-        try {
-            // Step 1: Send Handshake Packet
-            sendHandshakePacket();
+    @Override
+    public Integer setPacketID() {
+        return 0x00;
+    }
 
-            // Step 2: Send Login Start Packet
-            sendLoginStartPacket(username);
-        } catch (IOException ex) {
-            throw new LoginRequestException("Failed to send login request for username: " + username, ex);
-        }
+    @Override
+    public String setName() {
+        return "Handshake_Packet";
     }
 
     /**
@@ -61,16 +50,24 @@ public class LoginRequest {
      * +----------------------------------------------------------------------------------------+
      **/
 
-    private void sendHandshakePacket() throws IOException {
-        buffer.reset(); // Reuse Buffer
+    public void sendLoginRequest(String BOT_USERNAME) throws IOException {
+        try {
+            // Step 1: Send Handshake Packet
+            sendHandshakePacket();
+
+            // Step 2: Send Login Start Packet
+            new SERVER_Packet0x00_LOGIN().sendLoginStartPacket(BOT_USERNAME);
+        } catch (IOException ex) {
+            throw new LoginRequestException("Failed to send login request for username: " + BOT_USERNAME, ex);
+        }
+    }
+
+    private void sendHandshakePacket() throws IOException{
+        buffer.reset();
         packet = new DataOutputStream(buffer);
 
-        // Packet fields
-        int protocolVersion = 47; // Minecraft 1.8.8 protocol version.
-        int nextState = 2; //Status request for Login.
-
         // Write packet data
-        PacketWriter.writeVarInt(packet, 0x00); // Packet ID (Handshake)
+        PacketWriter.writeVarInt(packet, packetID);
         PacketWriter.writeVarInt(packet, protocolVersion);
         PacketWriter.writeString(packet, SERVER_ADDR);
         packet.writeShort(SERVER_PORTS);
@@ -81,18 +78,5 @@ public class LoginRequest {
 
         //System.out.println("Handshake packet send!");
         consolePrinter.NormalMessage("Handshake packet send!");
-    }
-
-    private void sendLoginStartPacket(String username) throws IOException {
-        buffer.reset(); // Reuse Buffer
-        packet = new DataOutputStream(buffer);
-
-        PacketWriter.writeVarInt(packet, 0x00); // Packet ID (Login Start)
-        PacketWriter.writeString(packet, username); // Player's Username
-
-        sendPacket.sendPacket(buffer.toByteArray());
-
-        // System.out.println("Login Request sent for user: " + username);
-        consolePrinter.NormalMessage("Login Request sent for user: " + username);
     }
 }

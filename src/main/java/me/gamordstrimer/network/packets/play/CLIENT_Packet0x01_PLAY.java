@@ -1,14 +1,31 @@
-package me.gamordstrimer.network.packets.play.clientbound;
+package me.gamordstrimer.network.packets.play;
 
 import me.gamordstrimer.network.config.StoreSessionInfos;
+import me.gamordstrimer.network.packets.Packet;
 import me.gamordstrimer.network.packets.PacketReader;
+import me.gamordstrimer.network.state.ConnectionState;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class JoinGamePacket01 {
+public class CLIENT_Packet0x01_PLAY extends Packet {
 
-    public void processJoinGamePacket(DataInputStream dataIn) throws IOException {
+    public CLIENT_Packet0x01_PLAY() {
+        super(ConnectionState.PLAY);
+    }
+
+    @Override
+    public Integer setPacketID() {
+        return 0x01;
+    }
+
+    @Override
+    public String setName() {
+        return "Join_Game_Packet";
+    }
+
+    @Override
+    public void handlePacket(DataInputStream dataIn) throws IOException {
         // Parse the packet fields
         int entityID = dataIn.readInt();
         int gamemode = dataIn.readUnsignedByte();
