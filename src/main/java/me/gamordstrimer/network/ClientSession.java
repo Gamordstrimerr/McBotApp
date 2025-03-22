@@ -3,6 +3,7 @@ package me.gamordstrimer.network;
 import lombok.Getter;
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.controllers.ServerConsolePrinter;
+import me.gamordstrimer.network.config.LoopsManager;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.config.StoreSocket;
 import me.gamordstrimer.network.packets.handshake.SERVER_Packet0x00_HANDSHAKE;
@@ -21,6 +22,7 @@ import java.net.*;
  **/
 
 public class ClientSession {
+    private final LoopsManager loopsManager = LoopsManager.getInstance();
 
     private String SERVER_ADDR;
     private int SERVER_PORTS;
@@ -58,7 +60,7 @@ public class ClientSession {
 
             // STEP 2 : send Login Request packet
             new SERVER_Packet0x00_HANDSHAKE().sendLoginRequest(username);
-            responsesHandler.restartLoop(); // restart the loop to listen for packet.
+            loopsManager.restartLoop(); // restart the loop to listen for packet.
 
             // STEP 3 : Listen For Response(s)
             responsesHandler.setSocket(socket);
@@ -80,7 +82,7 @@ public class ClientSession {
     private void closeConnection() {
         try {
             if (responsesHandler != null) {
-                responsesHandler.stop(); // Stop the loop before closing the socket
+                loopsManager.stop(); // Stop the loop before closing the socket
             }
             if (socket != null) {
                 if (!socket.isClosed()) {
