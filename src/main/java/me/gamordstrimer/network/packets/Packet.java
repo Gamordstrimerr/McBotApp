@@ -5,11 +5,9 @@ import lombok.Getter;
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.controllers.ServerConsolePrinter;
 import me.gamordstrimer.network.config.ConnectionConfig;
-import me.gamordstrimer.network.state.ConnectionState;
+import me.gamordstrimer.network.packets.state.ConnectionState;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 public abstract class Packet {

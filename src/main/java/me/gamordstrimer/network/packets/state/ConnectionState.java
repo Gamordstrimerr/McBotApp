@@ -1,4 +1,4 @@
-package me.gamordstrimer.network.state;
+package me.gamordstrimer.network.packets.state;
 
 public enum ConnectionState {
 

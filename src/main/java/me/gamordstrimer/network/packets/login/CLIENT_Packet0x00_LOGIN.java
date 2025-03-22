@@ -1,11 +1,9 @@
 package me.gamordstrimer.network.packets.login;
 
-import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.packets.Packet;
 import me.gamordstrimer.network.packets.PacketReader;
-import me.gamordstrimer.network.state.ConnectionState;
+import me.gamordstrimer.network.packets.state.ConnectionState;
 
-import java.io.Console;
 import java.io.DataInputStream;
 import java.io.IOException;
 

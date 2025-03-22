@@ -1,10 +1,10 @@
-package me.gamordstrimer.network.server;
+package me.gamordstrimer.network;
 
 import me.gamordstrimer.controllers.ConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.packets.login.CLIENT_Packet0x03_LOGIN;
 import me.gamordstrimer.network.packets.play.*;
-import me.gamordstrimer.network.state.ConnectionState;
+import me.gamordstrimer.network.packets.state.ConnectionState;
 import me.gamordstrimer.network.packets.PacketReader;
 import me.gamordstrimer.network.packets.SendPacket;
 

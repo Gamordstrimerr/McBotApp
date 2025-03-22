@@ -2,7 +2,7 @@ package me.gamordstrimer.network.packets.login;
 
 import me.gamordstrimer.network.packets.Packet;
 import me.gamordstrimer.network.packets.PacketWriter;
-import me.gamordstrimer.network.state.ConnectionState;
+import me.gamordstrimer.network.packets.state.ConnectionState;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

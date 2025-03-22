@@ -6,7 +6,6 @@ import me.gamordstrimer.controllers.ServerConsolePrinter;
 import me.gamordstrimer.network.config.PacketCompression;
 import me.gamordstrimer.network.config.StoreSocket;
 import me.gamordstrimer.network.packets.handshake.SERVER_Packet0x00_HANDSHAKE;
-import me.gamordstrimer.network.server.ResponsesHandler;
 
 import java.io.IOException;
 import java.net.*;
