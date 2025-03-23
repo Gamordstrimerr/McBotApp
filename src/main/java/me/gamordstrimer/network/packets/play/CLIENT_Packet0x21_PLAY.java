@@ -1,6 +1,7 @@
 package me.gamordstrimer.network.packets.play;
 
 import me.gamordstrimer.network.packets.Packet;
+import me.gamordstrimer.network.packets.PacketReader;
 import me.gamordstrimer.network.packets.state.ConnectionState;
 
 import java.io.DataInputStream;
@@ -27,18 +28,28 @@ public class CLIENT_Packet0x21_PLAY extends Packet {
 
     @Override
     public void handlePacket(DataInputStream dataIn) throws IOException {
+        int chunkX = dataIn.readInt();
+        int chunkZ = dataIn.readInt();
+        boolean groundUpContinuous = dataIn.readBoolean();
+        int primaryBitMask = dataIn.readUnsignedShort(); // Which sections are included
+        int dataSize = PacketReader.readVarInt(dataIn); // Size of compressed chunk data
 
-        // Skip the chunk coordinates if you don't need them
-        dataIn.readInt();  // Skip chunkX
-        dataIn.readInt();  // Skip chunkZ
-
-        System.out.println("[CHUNK LOADED] (" + chunkX + ", " + chunkZ + ")");
+        byte[] compressedData = new byte[dataSize];
+        dataIn.readFully(compressedData);
     }
 
-    public void setChunkCoordinate(double playerX, double playerZ) {
-        chunkX = (int) Math.floor(playerX / 16);
-        chunkZ = (int) Math.floor(playerZ / 16);
+    public double getGroundLevelFromChunk(byte[] decompressedChunkData, double chunkX, double chunkZ) {
+        double y = 0;
 
-        // System.out.println("[CHUNK LOADED] (" + chunkX + ", " + chunkZ + ")");
+        // Process the decompressed chunk data and find the heightmap or the highest block at the X, Z position
+        // Use Minecraft's chunk format to parse the chunk and find the height (you'll need to decode the chunk data format here)
+
+        // Simulated logic: Iterate through chunk sections and check for the highest non-air block at the given X, Z
+        // You can also access the heightmap for faster lookup of the terrain height
+
+        // This is just a placeholder; you need to decode the chunk data to extract the correct Y-level.
+        y = 62;  // Placeholder Y-level, replace with actual logic to find the ground height
+
+        return y;
     }
 }

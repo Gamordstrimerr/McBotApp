@@ -102,6 +102,6 @@ public class CLIENT_Packet0x08_PLAY extends Packet implements Runnable {
 
     private void sendPositionUpdate() {
         new SERVER_Packet0x04_PLAY().sendPositionUpdate(x, y, z, onGround);
-        new CLIENT_Packet0x21_PLAY().setChunkCoordinate(x, z);
+        // new CLIENT_Packet0x21_PLAY().setChunkCoordinate(x, z);
     }
 }
