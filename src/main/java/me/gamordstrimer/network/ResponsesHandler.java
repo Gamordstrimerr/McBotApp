@@ -52,7 +52,7 @@ public class ResponsesHandler {
                     int packetID = PacketReader.readVarInt(dataIn);
                     handlePacket(packetID, dataIn);
                 }
-                System.out.println("ResponseHandler Loop Running.");
+                // System.out.println("ResponseHandler Loop Running.");
             } catch (IOException ex) {
                 if (!running) break; // If stopping, exit loop
                 consolePrinter.ErrorMessage("Error receiving response: " + ex.getMessage());
@@ -108,7 +108,16 @@ public class ResponsesHandler {
                     new CLIENT_Packet0x08_PLAY().handlePacket(dataIn);
                     break;
                 case 0x12: // Entity Velocity
-                    new CLIENT_Packet0x12_PLAY().handlePacket(dataIn);
+                    // new CLIENT_Packet0x12_PLAY().handlePacket(dataIn);
+                    break;
+                case 0x21: // Chunk Data
+                    // new CLIENT_Packet0x21_PLAY().handlePacket(dataIn);
+                    break;
+                case 0x22: // Multi Block Change
+                    System.out.println("[PACKET] packet 0x22 received.");
+                    break;
+                case 0x23: // Block Change
+                    System.out.println("[PACKET] packet 0x23 received.");
                     break;
                 case 0x40:
                     System.out.println("[PACKET] packet 0x40 received.");
