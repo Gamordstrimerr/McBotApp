@@ -2,7 +2,6 @@ package me.gamordstrimer.network.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.gamordstrimer.network.ResponsesHandler;
 import me.gamordstrimer.network.packets.state.ConnectionState;
 
 import java.io.IOException;

@@ -38,7 +38,7 @@ public class SERVER_Packet0x00_PLAY extends Packet {
         buffer.reset();
         DataOutputStream tempPacket = new DataOutputStream(buffer);
 
-        tempPacket.write(0x00);
+        PacketWriter.writeVarInt(tempPacket, packetID);
         PacketWriter.writeVarInt(tempPacket, keepAliveID);
 
         byte[] packetContent = buffer.toByteArray();

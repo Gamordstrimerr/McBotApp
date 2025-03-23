@@ -40,7 +40,7 @@ public class SERVER_Packet0x01_PLAY extends Packet {
         buffer.reset();
         DataOutputStream tempPacket = new DataOutputStream(buffer);
 
-        tempPacket.write(01);
+        PacketWriter.writeVarInt(tempPacket, packetID);
         PacketWriter.writeString(tempPacket, chatMessage);
 
         byte[] packetContent = buffer.toByteArray();

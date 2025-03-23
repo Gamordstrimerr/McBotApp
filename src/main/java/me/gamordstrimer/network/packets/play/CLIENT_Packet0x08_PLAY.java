@@ -10,15 +10,14 @@ import java.io.IOException;
 public class CLIENT_Packet0x08_PLAY extends Packet implements Runnable {
     private final LoopsManager loopsManager = LoopsManager.getInstance();
 
-    private double x;  // X position of the bot
-    private double y;  // Y position of the bot
-    private double z;  // Z position of the bot
-
-    private double velocityY = 0.0; // Y velocity of the bot (needed for proper gravity)
-    private final double gravity = 0.08; // Gravity acceleration per tick
-    private final double maxFallSpeed = -3.92; // Terminal velocity (approx. from Minecraft)
-    private double groundLevel = 62; // Default ground level (should be detected dynamically)
-    private boolean onGround = false; // Whether the bot is on the ground or not
+    private double x,y,z;  // Position
+    private double vx = 0,vy = 0,vz = 0; // Velocity
+    private final double gravity = 0.08; // Gravity constant
+    private final double airDrag = 0.02; // Air drag factor
+    private final double groundDrag = 0.1; // Ground friction
+    private final double maxFallSpeed = -3.92; // Terminal velocity
+    private double groundLevel = 62; // Default (Replace with actual detection)
+    private boolean onGround = false;
 
     public CLIENT_Packet0x08_PLAY() {
         super(ConnectionState.PLAY);
@@ -41,45 +40,47 @@ public class CLIENT_Packet0x08_PLAY extends Packet implements Runnable {
         z = dataIn.readDouble();
 
         // Start movement logic in a new thread
-        Thread movementThread = new Thread(this);
-        movementThread.start();
+        new Thread(this).start();
     }
 
     @Override
     public void run() {
-        while (!onGround || loopsManager.isRunning()) {
+        while (!onGround && loopsManager.isRunning()) { // Stop when onGround is true
             updateBotPosition();
             try {
-                Thread.sleep(50); // Simulate 20 TPS (Minecraft runs at 20 ticks per second)
+                Thread.sleep(50); // 20 TPS
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
+        System.out.println("[STOPPED] Bot reached the ground. Exiting loop.");
     }
 
     // Update the bot's position and simulate gravity (called every tick)
-    public void updateBotPosition() {
-        checkGroundContact();  // Check if the bot is on the ground
-        applyGravity();        // Apply gravity
-
-        sendPositionUpdate(); // Send the position update to the server
+    private void updateBotPosition() {
+        checkGroundContact();
+        applyPhysics();
+        sendPositionUpdate();
     }
 
-    private void applyGravity() {
+    private void applyPhysics() {
         if (!onGround) {
-            // Increase velocity due to gravity (simulate falling acceleration)
-            velocityY -= gravity;
-
-            // Clamp velocity to terminal velocity
-            if (velocityY < maxFallSpeed) {
-                velocityY = maxFallSpeed;
-            }
-
-            // Apply velocity to position
-            y += velocityY;
+            vy -= gravity; // Apply gravity
+            vy = Math.max(vy, maxFallSpeed); // Cap falling speed
         } else {
-            velocityY = 0; // Reset velocity when on the ground
+            vy = 0; // Reset velocity when on ground
+            vx *= (1.0 - groundDrag); // Apply ground friction
+            vz *= (1.0 - groundDrag);
         }
+
+        // Apply drag
+        vx *= (1.0 - airDrag);
+        vz *= (1.0 - airDrag);
+
+        // Update position
+        x += vx;
+        y += vy;
+        z += vz;
     }
 
     // Method to dynamically check the ground level
@@ -87,7 +88,8 @@ public class CLIENT_Packet0x08_PLAY extends Packet implements Runnable {
         double detectedGroundLevel = getGroundLevel(x, y, z);
 
         if (y <= detectedGroundLevel) {
-            y = detectedGroundLevel; // Snap to the ground
+            y = detectedGroundLevel;
+            vy = 0;
             onGround = true;
         } else {
             onGround = false;
@@ -96,9 +98,7 @@ public class CLIENT_Packet0x08_PLAY extends Packet implements Runnable {
 
     // Simulated method to get the actual ground level (you need to replace this with real-world detection)
     private double getGroundLevel(double x, double y, double z) {
-        // In reality, you should check the world data to determine the actual block at (x, z).
-        // For now, assume the ground is at y = 62 (modify as needed).
-        return 62;
+        return 62; // Placeholder, replace with world data check
     }
 
     private void sendPositionUpdate() {
