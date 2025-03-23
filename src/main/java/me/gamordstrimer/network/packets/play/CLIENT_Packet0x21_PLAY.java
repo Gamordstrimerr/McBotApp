@@ -14,7 +14,8 @@ import java.util.zip.InflaterInputStream;
 
 public class CLIENT_Packet0x21_PLAY extends Packet {
 
-    private final Map<Long, byte[]> chunkDataMap = new HashMap<>();
+    private static final Map<Long, byte[]> chunkDataMap = new HashMap<>(); // Make it static for global access
+    private static final Map<Long, Integer> bitMaskMap = new HashMap<>(); // Store bitmask for each chunk
 
     public CLIENT_Packet0x21_PLAY() {
         super(ConnectionState.PLAY);
@@ -35,24 +36,24 @@ public class CLIENT_Packet0x21_PLAY extends Packet {
         int chunkX = dataIn.readInt();
         int chunkZ = dataIn.readInt();
         boolean groundUpContinuous = dataIn.readBoolean();
-        int primaryBitMask = dataIn.readUnsignedShort(); // Which sections are included
-        int dataSize = dataIn.readInt(); // Size of compressed chunk data
+        int primaryBitMask = dataIn.readUnsignedShort();
+        int dataSize = dataIn.readInt();
 
         byte[] compressedData = new byte[dataSize];
-        dataIn.readFully(compressedData); // Read compressed chunk data
+        dataIn.readFully(compressedData);
 
-        // Decompress the data
         byte[] decompressedData = decompressChunkData(compressedData);
+        long chunkKey = getChunkKey(chunkX, chunkZ);
 
-        // Store chunk data
-        long chunkKey = ((long) chunkX << 32) | (chunkZ & 0xFFFFFFFFL);
+        // Store the chunk data
         chunkDataMap.put(chunkKey, decompressedData);
+        bitMaskMap.put(chunkKey, primaryBitMask);
 
         System.out.println("[CHUNK LOADED] (" + chunkX + ", " + chunkZ + ")");
     }
 
     public static byte[] decompressChunkData(byte[] compressedData) throws IOException {
-        Inflater inflater = new Inflater(); // Zlib decompression
+        Inflater inflater = new Inflater();
         try (ByteArrayInputStream byteStream = new ByteArrayInputStream(compressedData);
              InflaterInputStream inflaterStream = new InflaterInputStream(byteStream, inflater);
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -63,9 +64,58 @@ public class CLIENT_Packet0x21_PLAY extends Packet {
                 outputStream.write(buffer, 0, bytesRead);
             }
 
-            return outputStream.toByteArray(); // Return decompressed chunk data
+            return outputStream.toByteArray();
         } finally {
-            inflater.end(); // Clean up resources
+            inflater.end();
         }
+    }
+
+    /**
+     * Fetches the ground level for the given (X, Z).
+     */
+    public static int getGroundLevel(int blockX, int blockZ) {
+        int chunkX = blockX >> 4;
+        int chunkZ = blockZ >> 4;
+        long chunkKey = getChunkKey(chunkX, chunkZ);
+
+        if (!chunkDataMap.containsKey(chunkKey)) {
+            return -1; // Chunk not loaded
+        }
+
+        byte[] chunkData = chunkDataMap.get(chunkKey);
+        int bitMask = bitMaskMap.get(chunkKey);
+
+        return findGroundLevel(chunkData, bitMask, blockX, blockZ);
+    }
+
+    private static long getChunkKey(int chunkX, int chunkZ) {
+        return ((long) chunkX << 32) | (chunkZ & 0xFFFFFFFFL);
+    }
+
+    private static int findGroundLevel(byte[] decompressedData, int primaryBitMask, int blockX, int blockZ) {
+        final int CHUNK_SECTION_HEIGHT = 16;
+        final int CHUNK_WIDTH = 16;
+
+        int localX = blockX & 15;
+        int localZ = blockZ & 15;
+        int offset = 0;
+
+        for (int section = 15; section >= 0; section--) {
+            if ((primaryBitMask & (1 << section)) == 0) continue;
+
+            for (int y = CHUNK_SECTION_HEIGHT - 1; y >= 0; y--) {
+                int globalY = (section * CHUNK_SECTION_HEIGHT) + y;
+                int index = (y * CHUNK_WIDTH * CHUNK_WIDTH) + (localZ * CHUNK_WIDTH) + localX;
+                int blockState = ((decompressedData[offset + (index * 2)] & 0xFF) << 8)
+                        | (decompressedData[offset + (index * 2) + 1] & 0xFF);
+
+                if (blockState != 0) {
+                    return globalY;
+                }
+            }
+            offset += (CHUNK_SECTION_HEIGHT * CHUNK_WIDTH * CHUNK_WIDTH * 2);
+        }
+
+        return -1;
     }
 }

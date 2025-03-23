@@ -10,13 +10,12 @@ import java.io.IOException;
 public class CLIENT_Packet0x08_PLAY extends Packet implements Runnable {
     private final LoopsManager loopsManager = LoopsManager.getInstance();
 
-    private double x,y,z;  // Position
-    private double vx = 0,vy = 0,vz = 0; // Velocity
-    private final double gravity = 0.08; // Gravity constant
-    private final double airDrag = 0.02; // Air drag factor
-    private final double groundDrag = 0.1; // Ground friction
-    private final double maxFallSpeed = -3.92; // Terminal velocity
-    private double groundLevel = 62; // Default (Replace with actual detection)
+    private double x, y, z;
+    private double vx = 0, vy = 0, vz = 0;
+    private final double gravity = 0.08;
+    private final double airDrag = 0.02;
+    private final double groundDrag = 0.1;
+    private final double maxFallSpeed = -3.92;
     private boolean onGround = false;
 
     public CLIENT_Packet0x08_PLAY() {
@@ -56,7 +55,6 @@ public class CLIENT_Packet0x08_PLAY extends Packet implements Runnable {
         System.out.println("[STOPPED] Bot reached the ground. Exiting loop.");
     }
 
-    // Update the bot's position and simulate gravity (called every tick)
     private void updateBotPosition() {
         checkGroundContact();
         applyPhysics();
@@ -65,40 +63,32 @@ public class CLIENT_Packet0x08_PLAY extends Packet implements Runnable {
 
     private void applyPhysics() {
         if (!onGround) {
-            vy -= gravity; // Apply gravity
-            vy = Math.max(vy, maxFallSpeed); // Cap falling speed
+            vy -= gravity;
+            vy = Math.max(vy, maxFallSpeed);
         } else {
-            vy = 0; // Reset velocity when on ground
-            vx *= (1.0 - groundDrag); // Apply ground friction
+            vy = 0;
+            vx *= (1.0 - groundDrag);
             vz *= (1.0 - groundDrag);
         }
 
-        // Apply drag
         vx *= (1.0 - airDrag);
         vz *= (1.0 - airDrag);
 
-        // Update position
         x += vx;
         y += vy;
         z += vz;
     }
 
-    // Method to dynamically check the ground level
     private void checkGroundContact() {
-        double detectedGroundLevel = getGroundLevel(x, y, z);
+        int detectedGroundLevel = CLIENT_Packet0x21_PLAY.getGroundLevel((int) x, (int) z);
 
-        if (y <= detectedGroundLevel) {
+        if (detectedGroundLevel != -1 && y <= detectedGroundLevel) {
             y = detectedGroundLevel;
             vy = 0;
             onGround = true;
         } else {
             onGround = false;
         }
-    }
-
-    // Simulated method to get the actual ground level (you need to replace this with real-world detection)
-    private double getGroundLevel(double x, double y, double z) {
-        return 62; // Placeholder, replace with world data check
     }
 
     private void sendPositionUpdate() {
